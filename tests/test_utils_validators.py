@@ -20,6 +20,8 @@ class TestUtilsValidators(unittest.TestCase):
         self.invalid_int_values = [0.1, " ", "", "hello", [], {}, (), None]
         self.invalid_tuple_values = [0, 1.2, " ", "hello?", [], {}, None]
         self.invalid_string_values = [1, 2.2, [2, 3], {}, (), self.dt, None]
+        self.invalid_generic_string_type_error_values = [
+                1, 2.2, [2, 3], {}, ()]
 
     def tearDown(self):
         self.dt = None
@@ -200,6 +202,12 @@ class TestUtilsValidators(unittest.TestCase):
                     value=invalid_value):
                 with self.assertRaises(ValueError):
                     val.validate_int_tuple_property((1, 2, 3), invalid_value)
+
+    def test_is_valid_dict(self):
+        print("=== test_is_valid_dict ===")
+        self.assertTrue(val.is_valid_dict({}))
+        self.assertTrue(val.is_valid_dict({"dict": "is_dict"}))
+        self.assertFalse(val.is_valid_dict("not a dict!"))
 
 
 if __name__ == '__main__':
