@@ -11,7 +11,4 @@ The aim of this program is to allow the user to schedule an appointment with a c
 the user's calendar and send a request to the contact for confirmation.
 
 Let's see how it goes.
-NS# README.txt
-
-Appointment Genie
-Author: Nadir Saleh
+NS
