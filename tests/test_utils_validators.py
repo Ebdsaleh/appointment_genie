@@ -63,6 +63,12 @@ class TestUtilsValidators(unittest.TestCase):
                     value=invalid_value):
                 self.assertFalse(val.is_valid_tuple(invalid_value))
 
+    def test_is_valid_dict(self):
+        print("=== test_is_valid_dict ===")
+        self.assertTrue(val.is_valid_dict({}))
+        self.assertTrue(val.is_valid_dict({"dict": "is_dict"}))
+        self.assertFalse(val.is_valid_dict("not a dict!"))
+
     # Property tests
     def test_validate_string_property_successful(self):
         print("=== test_validate_string_property ===")
@@ -197,17 +203,75 @@ class TestUtilsValidators(unittest.TestCase):
         for invalid_value in will_raise_value_errors_for_property_name:
             with self.subTest(
                     msg="Test values that will raise a ValueError exception " +
-                    "with 'validate_int_tuple_property' for the " +
+                    "with 'validate_int_tuple_property' function for the " +
                     "'property_name' parameter",
                     value=invalid_value):
                 with self.assertRaises(ValueError):
                     val.validate_int_tuple_property((1, 2, 3), invalid_value)
 
-    def test_is_valid_dict(self):
-        print("=== test_is_valid_dict ===")
-        self.assertTrue(val.is_valid_dict({}))
-        self.assertTrue(val.is_valid_dict({"dict": "is_dict"}))
-        self.assertFalse(val.is_valid_dict("not a dict!"))
+    def test_validate_string_dict_property_successful(self):
+        print("=== test_validate_string_dict_successful ===")
+        test_dict = {"dict": "test"}
+        prop_value = "test_dict"
+        self.assertIsInstance(test_dict, dict)
+        self.assertEqual(test_dict, {"dict": "test"})
+        self.assertIsInstance(prop_value, str)
+        self.assertEqual(prop_value, "test_dict")
+
+    def test_validate_string_dict_property_failure_value_parameter(self):
+        t_name = "test_validate_string_dict_property_failure_value_parameter"
+        print(f"=== {t_name} ===")
+        # ValueError
+        raises_value_errors = [None, " ", ""]
+        for invalid_value in raises_value_errors:
+            with self.subTest(
+                    msg="Test values that will raise a ValueError exception " +
+                    "with the 'validate_string_dict_property' function for " +
+                    " the 'value' parameter.",
+                    value=invalid_value):
+                with self.assertRaises(ValueError):
+                    val.validate_string_dict_property(
+                            {invalid_value: invalid_value}, "test_dict")
+
+        # TypeError
+        raises_type_errors = [[], {}, 10, 1.3, (1, 2)]
+        for invalid_value in raises_type_errors:
+            with self.subTest(
+                    msg="Test values that will raise a TypeError exception " +
+                    " with 'validate_string_dict_property' function for  " +
+                    "the 'value' parameter.",
+                    value=invalid_value):
+                with self.assertRaises(TypeError):
+                    val.validate_string_dict_property(
+                            {invalid_value, invalid_value}, "test_dict")
+
+    def test_validate_string_dict_property_failure_property_value(self):
+        t_name = "test_validate_string_dict_property_failure_property_value"
+        print(f"=== {t_name} ===")
+        raises_value_errors = [None, " ", ""]
+
+        # ValueError
+        for invalid_value in raises_value_errors:
+            with self.subTest(
+                    msg="Test values that will raise a ValueError exception " +
+                    "with the 'validate_string_dict_property' function for " +
+                    " the 'property_name' parameter.",
+                    value=invalid_value):
+                with self.assertRaises(ValueError):
+                    val.validate_string_dict_property(
+                            {"test": "test_dict"}, invalid_value)
+
+        # TypeError
+        raises_type_errors = [[], {}, 10, 1.3, (1, 2)]
+        for invalid_value in raises_type_errors:
+            with self.subTest(
+                    msg="Test values that will raise a TypeError exception " +
+                    "with the 'validate_string_dict_property' function for " +
+                    "'property_name' parameter.",
+                    value=invalid_value):
+                with self.assertRaises(TypeError):
+                    val.validate_string_dict_property(
+                            {"test": "test_dict"}, invalid_value)
 
 
 if __name__ == '__main__':

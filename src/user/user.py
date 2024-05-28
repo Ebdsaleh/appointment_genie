@@ -1,6 +1,6 @@
 # src/user/user.py
 from src.utils.validators import validate_string_property, \
-        validate_dict_property
+        validate_string_dict_property
 from src.utils.auth import check_password_hash, generate_pw_hash
 
 
@@ -72,5 +72,5 @@ class User:
         return self.contacts
 
     def add_contact(self, value: dict):
-        validate_dict_property(value, 'contacts')
+        validate_string_dict_property(value, 'contacts')
         self.contacts.append(value)

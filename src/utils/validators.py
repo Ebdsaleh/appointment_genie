@@ -100,7 +100,10 @@ def validate_int_tuple_property(value, property_name):
                 f"{property_name}, must only contain int values.")
 
 
-def validate_dict_property(value: dict, property_name: str):
+def validate_string_dict_property(value: dict, property_name: str):
+    """
+    this will only accept a dictionary with string values.
+    """
     validate_string_property(property_name, property_name)
     if value is None:
         raise ValueError("'dict' must not be None.")
@@ -110,10 +113,11 @@ def validate_dict_property(value: dict, property_name: str):
 
     if not is_valid_dict(value):
         raise TypeError(f"{property_name} must be a 'dict'.")
-
-    for k, v in value.items():
-        if not isinstance(k, str):
-            raise ValueError(f"{property_name}'s key must be a string.")
-        if not isinstance(v, str):
-            raise ValueError(f"{property_name}'s value must be a string.")
-
+    if is_valid_dict(value):
+        for k, v in value.items():
+            if not isinstance(k, str):
+                raise ValueError(f"{property_name}'s key must be a string.")
+            if not isinstance(v, str):
+                raise ValueError(f"{property_name}'s value must be a string.")
+            validate_string_property(k, property_name)
+            validate_string_property(v, property_name)
