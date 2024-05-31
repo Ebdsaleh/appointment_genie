@@ -1,13 +1,14 @@
 # test_user.py
 import unittest
 from src.user.user import User, validate_email
+from src.booking.booking import Booking
+from datetime import datetime
 from src.utils.auth import generate_pw_hash, verify_password
 
 
 class TestUser(unittest.TestCase):
 
     def setUp(self):
-        print("TestUser - setUp")
         self.user = User()
         self.pw_hash = self.user.password
         self.password = "password"
@@ -29,12 +30,15 @@ class TestUser(unittest.TestCase):
         self.assertIsInstance(self.user.email, str)
         self.assertIsInstance(self.user.password, str)
         self.assertIsInstance(self.user.contacts, list)
-
+        self.assertIsInstance(self.user.bookings, list)
+        self.assertIsInstance(self.user._booking_id, int)
         # Value assertions
         self.assertEqual(self.user.user_name, "new_user")
         self.assertEqual(self.user.email, "update_this_email@appgenie.app")
         self.assertEqual(self.user.password, self.pw_hash)
         self.assertEqual(self.user.contacts, [])
+        self.assertEqual(self.user.bookings, [])
+        self.assertEqual(self.user._booking_id, 0)
 
     def test_create_user_with_arguments_success(self):
         print("=== test_create_user_with_arguments_success")
@@ -51,12 +55,16 @@ class TestUser(unittest.TestCase):
         self.assertIsInstance(user.email, str)
         self.assertIsInstance(user.password, str)
         self.assertIsInstance(user.contacts, list)
+        self.assertIsInstance(user.bookings, list)
+        self.assertIsInstance(self.user._booking_id, int)
 
         # Value assertions
         self.assertEqual(user.user_name, "test_user")
         self.assertEqual(user.email, "test_.user@test_email.com")
         self.assertEqual(user.password, pw_hash)
         self.assertEqual(user.contacts, [])
+        self.assertEqual(user.bookings, [])
+        self.assertEqual(self.user._booking_id, 0)
 
     def test_create_user_with_arguments_failure_parameter_user_name(self):
         t_name = "test_create_user_with_arguments_failure_parameter_user_name"
@@ -173,10 +181,15 @@ class TestUser(unittest.TestCase):
 
     def test_contacts_property(self):
         print("=== test_contacts_property ===")
+
+        from src.contact.contact import Contact
         self.assertIsInstance(self.user.contacts, list)
-        self.user.add_contact({"new_contact": "new_contact@email.com"})
+        contact_name = "new_contact"
+        contact_email = "new_contact@email.com"
+        new_contact = Contact(contact_name, contact_email)
+        self.user.add_contact(new_contact)
         self.assertEqual(
-                self.user.contacts, [{"new_contact": "new_contact@email.com"}])
+                self.user.contacts, [new_contact])
 
     def test_get_contacts(self):
         print("=== test_get_contacts ===")
@@ -185,12 +198,16 @@ class TestUser(unittest.TestCase):
 
     def test_add_contact(self):
         print("=== test_add_contact ===")
-        self.user.add_contact({"new_contact": "new_contact@email.com"})
-        self.assertEqual(
-                self.user.contacts, [{"new_contact": "new_contact@email.com"}])
 
-        raises_value_errors = [None, {}, {"test 1": 1}]
-        raises_type_errors = [" ", 1.2, 1, [], ()]
+        from src.contact.contact import Contact
+        contact_name = "new_contact"
+        contact_email = "new_contact@email.com"
+        new_contact = Contact(contact_name, contact_email)
+        self.user.add_contact(new_contact)
+        self.assertEqual(self.user.contacts, [new_contact])
+
+        raises_value_errors = [None]
+        raises_type_errors = [" ", 1.2, 1, [], (), {}]
 
         # ValueError
         for invalid_value in raises_value_errors:
@@ -208,6 +225,38 @@ class TestUser(unittest.TestCase):
                     value=invalid_value):
                 with self.assertRaises(TypeError):
                     self.user.add_contact(invalid_value)
+
+    def test_bookings(self):
+        print("=== test_bookings ===")
+        self.assertIsInstance(self.user.bookings, list)
+        self.assertEqual(self.user.bookings, [])
+
+    def test_create_booking(self):
+        print("=== test_create_booking ===")
+        title = "New Booking"
+        date = datetime(2024, 5, 30)
+        time = (12, 30)
+        contact_name = "test_contact"
+        contact_email = "test_contact@appointment_genie.app"
+
+        from src.contact.contact import Contact
+        new_contact = Contact(contact_name, contact_email)
+        self.user.add_contact(new_contact)
+        contact_name_1 = "My Friend"
+        contact_email_1 = "my_friend@email.com"
+        self.user.create_booking(
+                title,
+                date,
+                time,
+                contact_name_1,
+                contact_email_1,
+                desc="Test Booking")
+
+        self.assertEqual(len(self.user.bookings), 1)
+        self.assertEqual(self.user._booking_id, 1)
+        self.assertEqual(len(self.user.contacts), 2)
+        self.assertIsInstance(self.user.contacts[0], Contact)
+        self.assertIsInstance(self.user.contacts[1], Contact)
 
 
 if __name__ == '__main__':

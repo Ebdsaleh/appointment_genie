@@ -2,6 +2,7 @@
 from src.utils.validators import validate_string_property, \
         validate_string_dict_property
 from src.utils.auth import check_password_hash, generate_pw_hash
+from src.booking.booking import Booking
 
 
 def validate_email(email):
@@ -44,8 +45,9 @@ class User:
         user_name : str,
         password : str (stored as a password hash),
         email : str,
-        contacts : list containing a dict. (Might make a contact object later).
+        contacts : list of Contact objects.
     """
+    _booking_id = 0
 
     def __init__(self, user_name=None, email=None, password=None):
         if user_name is None:
@@ -67,10 +69,46 @@ class User:
             self.password = generate_pw_hash(password)
 
         self.contacts = []
+        self.bookings = []
 
     def get_contacts(self):
         return self.contacts
 
-    def add_contact(self, value: dict):
-        validate_string_dict_property(value, 'contacts')
-        self.contacts.append(value)
+    def add_contact(self, value):
+        if value is None:
+            raise ValueError("contact must not be None.")
+        from src.contact.contact import Contact
+        if not isinstance(value, Contact):
+            raise TypeError("'contact' must be a of type 'Contact'")
+        else:
+            self.contacts.append(value)
+
+    def create_booking(
+            self,
+            title,
+            date,
+            time,
+            contact_name,
+            contact_email,
+            desc):
+        booking = Booking()
+        booking.title = title
+        booking.date = date
+        booking.time = time
+        booking.contact = contact_name
+        booking.description = desc
+        self._booking_id += 1
+        self.bookings.append(booking)
+        contact_found = False
+
+        from src.contact.contact import Contact
+        for item in self.contacts:
+            if contact_name in item.name:
+                if contact_email in item.email:
+                    contact_found = True
+        if not contact_found:
+            print(f"{contact_name} not found in contact list. " +
+                  "Adding them to your contacts.")
+            new_contact = Contact(contact_name, contact_email)
+            self.add_contact(new_contact)
+        print(f"sending email to {contact_email}to confirm booking")
