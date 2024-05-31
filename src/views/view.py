@@ -86,3 +86,43 @@ class View:
         self._size = (self._width, self.height)
         if hasattr(self, 'tk'):
             self.tk.geometry(f"{self._width}x{self._height}")
+
+    # components
+    def create_button(self, name="button", text="Click me", padx=0, pady=0):
+        validate_string_property(name, 'name')
+        validate_string_property(text, 'text')
+        button = ttk.Button(self.tk, text=text)
+        button.name = name
+        button.pack(padx=padx, pady=pady)
+        self.components.append({name: button})
+        return button
+
+    def get_component(self, component_name):
+        validate_string_property(component_name, 'component_name')
+        for component in self.components:
+            for k, v in component.items():
+                if k == component_name:
+                    return v
+        return None
+
+    def create_label(self, name='label', text="new label"):
+        validate_string_property(name, 'name')
+        validate_string_property(text, 'text')
+        label = ttk.Label(self.tk, text=text)
+        label.name = name
+        label.pack()
+        self.components.append({name: label})
+        return label
+
+    def create_entry_text_field(
+            self, name="entry_text_field", width=30):
+        validate_string_property(name, 'name')
+        if not isinstance(width, int):
+            raise TypeError("'width' must be an int.")
+        if width <= 10:
+            raise ValueError("'width' must be greater than 10.")
+        entry_text_field = tk.Entry(self.tk, width=width)
+        entry_text_field.name = name
+        entry_text_field.pack()
+        self.components.append({name: entry_text_field})
+        return entry_text_field

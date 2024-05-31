@@ -131,6 +131,127 @@ class TestView(unittest.TestCase):
                 with self.assertRaises(TypeError):
                     self.view.height = invalid_value
 
+    def test_create_button(self):
+        button = self.view.create_button()
+        self.assertIsInstance(button, ttk.Button)
+        self.assertEqual(button.name, "button")
+        self.assertEqual(button.cget('text'), "Click me")
+        self.assertEqual(button.pack_info()['padx'], 0)
+        self.assertEqual(button.pack_info()['pady'], 0)
+        self.assertEqual(
+                self.view.components, [{"button": button}])
+        self.assertIn({button.name: button}, self.view.components)
+
+    def test_get_component(self):
+        print("=== test_get_component ===")
+        self.view.create_button("my_button", text="Click me", pady=20)
+        button = self.view.get_component("my_button")
+        self.assertEqual(button.cget("text"), "Click me")
+        self.assertEqual(button.pack_info()['padx'], 0)
+        self.assertEqual(button.pack_info()['pady'], 20)
+        self.assertIsInstance(self.view.get_component("my_button"), ttk.Button)
+        self.assertTrue(len(self.view.components), 1)
+
+        # Check for non exisitent values
+        submit_button = self.view.get_component("submit_button")
+        self.assertIsNone(self.view.get_component("submit_button"))
+        self.assertIsNone(submit_button)
+        # ValueErrors
+        raises_value_errors = [None, "", " "]
+        for invalid_value in raises_value_errors:
+            with self.subTest(
+                msg="Test values that raise a ValueError exception " +
+                "when using 'get_component'.",
+                    value=invalid_value):
+                with self.assertRaises(ValueError):
+                    self.view.get_component(invalid_value)
+
+        # TypeErrors
+        raises_type_errors = [1, 2.1, {}, [], (), tk]
+        for invalid_value in raises_type_errors:
+            with self.subTest(
+                msg="Test values that raise a TypeError exception " +
+                "when using'get_component'.",
+                    value=invalid_value):
+                with self.assertRaises(TypeError):
+                    self.view.get_component(invalid_value)
+
+    def test_create_label(self):
+        print("=== test_create_label ===")
+        self.view.create_label("my_label", "test_label")
+        label = self.view.get_component("my_label")
+        self.assertIsInstance(label, ttk.Label)
+        self.assertEqual(label.cget('text'), "test_label")
+        self.assertTrue(len(self.view.components), 1)
+
+        # ValueErrors
+        raises_value_errors = [None, "", " "]
+        for invalid_value in raises_value_errors:
+            with self.subTest(
+                msg="Test values that raise a ValueError exception " +
+                "when creating a 'label'.",
+                    value=invalid_value):
+                with self.assertRaises(ValueError):
+                    self.view.create_label(invalid_value, "test_label")
+                    self.view.create_label("my_label", invalid_value)
+
+        # TypeErrors
+        raises_type_errors = [1, 2.1, {}, [], (), tk]
+        for invalid_value in raises_type_errors:
+            with self.subTest(
+                msg="Test values that raise a TypeError exception " +
+                "when creating a 'label'.",
+                    value=invalid_value):
+                with self.assertRaises(TypeError):
+                    self.view.create_label(invalid_value, "test_label")
+                    self.view.create_label("my_label", invalid_value)
+
+    def test_create_entry_text_field(self):
+        print("=== test_create_entry_text_field ===")
+        entry_text = self.view.create_entry_text_field("test_entry")
+        self.assertIsInstance(entry_text, tk.Entry)
+        self.assertIsNotNone(entry_text)
+        self.assertEqual(entry_text.name, 'test_entry')
+        self.assertEqual(len(self.view.components), 1)
+
+        # name - ValueErrors
+        raises_value_errors = [None, "", " "]
+        for invalid_value in raises_value_errors:
+            with self.subTest(
+                msg="Test values that raise a ValueError exception " +
+                "for the 'name' parameter.",
+                    value=invalid_value):
+                with self.assertRaises(ValueError):
+                    self.view.create_entry_text_field(invalid_value)
+        # width - ValueErrors
+        for number in range(-10, 11):
+            with self.subTest(
+                msg="Test values that raise a ValueError exception " +
+                "with the 'width' property",
+                    value=number):
+                with self.assertRaises(ValueError):
+                    self.view.create_entry_text_field('test_entry', number)
+
+        # name - TypeErrors
+        raises_type_errors = [1, 2.3, (), [], {}, tk]
+        for invalid_value in raises_type_errors:
+            with self.subTest(
+                msg="Test values that raise a TypeError exception " +
+                "with the 'name' parameter.",
+                    value=invalid_value):
+                with self.assertRaises(TypeError):
+                    self.view.create_entry_text_field(invalid_value)
+        # width - TypeError
+        raises_type_errors = [2.3, (), [1, 2, 3], {}, tk]
+        for invalid_value in raises_type_errors:
+            with self.subTest(
+                msg="Test values that raise a TypeError exception " +
+                "with the 'width' parameter.",
+                    value=invalid_value):
+                with self.assertRaises(TypeError):
+                    self.view.create_entry_text_field(
+                            "test_entry", invalid_value)
+
 
 if __name__ == '__main__':
     unittest.main()
