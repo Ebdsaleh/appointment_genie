@@ -13,14 +13,8 @@ class View:
     """
 
     def __init__(self, title="new_view", size=(300, 400)):
-        if title is None:
-            self._title = "new_view"
-        else:
-            self._title = title
-        if size is None:
-            self._size = (300, 400)
-        else:
-            self._size = size
+        self.title = title if title is not None else "new_view"
+        self.size = size if size is not None else (300, 400)
         self._width = size[0]
         self._height = size[1]
         self.components = []
@@ -29,6 +23,10 @@ class View:
         self.tk = tk.Tk()
         self.tk.title(self._title)
         self.tk.geometry(f"{self._size[0]}x{self._size[1]}")
+        # create the frame to place widgets
+        self.frame = self.create_frame(
+                name="main_frame", x=0, y=0,
+                width=self.width, height=self.height)
 
 # properties
     @property
@@ -56,6 +54,7 @@ class View:
         self._width, self._height = value
         if hasattr(self, 'tk'):
             self.tk.geometry(f"{self._width}x{self._height}")
+            self.frame.place(width=self._width, height=self._height)
 
     @property
     def width(self):
@@ -68,6 +67,7 @@ class View:
         self._size = (self._width, self._height)
         if hasattr(self, 'tk'):
             self.tk.geometry(f"{self._width}x{self._height}")
+            self.frame.place(width=self._width, height=self._height)
 
     @property
     def height(self):
@@ -80,16 +80,23 @@ class View:
         self._size = (self._width, self.height)
         if hasattr(self, 'tk'):
             self.tk.geometry(f"{self._width}x{self._height}")
+            self.frame.place(width=self._width, height=self._height)
 
     # components
-    def create_button(self, name="button", text="Click me", padx=0, pady=0):
+    def create_button(
+            self,
+            name="button",
+            text="Click me",
+            x=0, y=0,
+            parent=None):
         validate_string_property(name, 'name')
         validate_string_property(text, 'text')
-        validate_int_property(padx, 'padx')
-        validate_int_property(pady, 'pady')
-        button = ttk.Button(self.tk, text=text)
+        validate_int_property(x, 'x')
+        validate_int_property(y, 'y')
+        parent = parent or self.frame
+        button = ttk.Button(parent, text=text)
         button.name = name
-        button.pack(padx=padx, pady=pady)
+        button.place(x=x, y=y)
         self.components.append({name: button})
         return button
 
@@ -101,24 +108,32 @@ class View:
                     return v
         return None
 
-    def create_label(self, name='label', text="new label"):
+    def create_label(
+            self, name='label', text="new label", x=0, y=0, parent=None):
         validate_string_property(name, 'name')
         validate_string_property(text, 'text')
-        label = ttk.Label(self.tk, text=text)
+        validate_int_property(x, 'x')
+        validate_int_property(y, 'y')
+        parent = parent or self.frame
+        label = ttk.Label(parent, text=text)
         label.name = name
-        label.pack()
+        label.place(x=x, y=y)
         self.components.append({name: label})
         return label
 
     def create_entry_text_field(
-            self, name="entry_text_field", width=30):
+            self, name="entry_text_field", width=30,
+            x=0, y=0, parent=None):
         validate_string_property(name, 'name')
         validate_int_property(width, 'width')
         if width < 11:
             raise ValueError("'width' must be greater than 10")
-        entry_text_field = tk.Entry(self.tk, width=width)
+        validate_int_property(x, 'x')
+        validate_int_property(y, 'y')
+        parent = parent or self.frame
+        entry_text_field = tk.Entry(parent, width=width)
         entry_text_field.name = name
-        entry_text_field.pack()
+        entry_text_field.place(x=x, y=y, width=width)
         self.components.append({name: entry_text_field})
         return entry_text_field
 
@@ -136,4 +151,3 @@ class View:
         frame.name = name
         self.components.append({frame.name: frame})
         return frame
-

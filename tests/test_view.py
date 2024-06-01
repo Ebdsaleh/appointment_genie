@@ -22,10 +22,12 @@ class TestView(unittest.TestCase):
         self.assertIsInstance(self.view.height, int)
         self.assertIsInstance(self.view.components, list)
         self.assertIsInstance(self.view.tk, tk.Tk)
+        self.assertIsInstance(self.view.frame, ttk.Frame)
         self.assertEqual(self.view.title, "new_view")
         self.assertEqual(self.view.size, (300, 400))
         self.assertEqual(self.view.width, 300)
         self.assertEqual(self.view.height, 400)
+        self.assertEqual(len(self.view.components), 1)
         self.assertTrue(hasattr(self.view, 'tk'))
         self.assertTrue(hasattr(self.view.tk, 'geometry'))
         self.assertTrue(hasattr(self.view.tk, 'title'))
@@ -38,6 +40,7 @@ class TestView(unittest.TestCase):
         self.assertEqual(v.size, (800, 600))
         self.assertEqual(v.width, 800)
         self.assertEqual(v.height, 600)
+        self.assertEqual(len(v.components), 1)
         self.assertTrue(hasattr(v, 'tk'))
         self.assertTrue(hasattr(v.tk, 'title'))
         self.assertTrue(hasattr(v.tk, 'geometry'))
@@ -136,21 +139,22 @@ class TestView(unittest.TestCase):
         self.assertIsInstance(button, ttk.Button)
         self.assertEqual(button.name, "button")
         self.assertEqual(button.cget('text'), "Click me")
-        self.assertEqual(button.pack_info()['padx'], 0)
-        self.assertEqual(button.pack_info()['pady'], 0)
+        self.assertEqual(button.place_info().get('x', 0), str(0))
+        self.assertEqual(button.place_info().get('y', 0), str(0))
         self.assertEqual(
-                self.view.components, [{"button": button}])
+                self.view.components,
+                [{self.view.frame.name: self.view.frame}, {"button": button}])
         self.assertIn({button.name: button}, self.view.components)
 
     def test_get_component(self):
         print("=== test_get_component ===")
-        self.view.create_button("my_button", text="Click me", pady=20)
+        self.view.create_button("my_button", text="Click me", x=10, y=0)
         button = self.view.get_component("my_button")
         self.assertEqual(button.cget("text"), "Click me")
-        self.assertEqual(button.pack_info()['padx'], 0)
-        self.assertEqual(button.pack_info()['pady'], 20)
+        self.assertEqual(button.place_info().get('x', 10), str(10))
+        self.assertEqual(button.place_info().get('y', 0), str(0))
         self.assertIsInstance(self.view.get_component("my_button"), ttk.Button)
-        self.assertTrue(len(self.view.components), 1)
+        self.assertTrue(len(self.view.components), 2)
 
         # Check for non exisitent values
         submit_button = self.view.get_component("submit_button")
@@ -182,7 +186,7 @@ class TestView(unittest.TestCase):
         label = self.view.get_component("my_label")
         self.assertIsInstance(label, ttk.Label)
         self.assertEqual(label.cget('text'), "test_label")
-        self.assertTrue(len(self.view.components), 1)
+        self.assertTrue(len(self.view.components), 2)
 
         # ValueErrors
         raises_value_errors = [None, "", " "]
@@ -212,7 +216,7 @@ class TestView(unittest.TestCase):
         self.assertIsInstance(entry_text, tk.Entry)
         self.assertIsNotNone(entry_text)
         self.assertEqual(entry_text.name, 'test_entry')
-        self.assertEqual(len(self.view.components), 1)
+        self.assertEqual(len(self.view.components), 2)
 
         # name - ValueErrors
         raises_value_errors = [None, "", " "]
