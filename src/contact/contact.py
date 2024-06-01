@@ -1,7 +1,6 @@
 # contact.py
 import uuid
-from src.utils.validators import validate_string_property
-from src.user.user import validate_email
+from src.utils.validators import validate_string_property, validate_email
 
 
 class Contact:

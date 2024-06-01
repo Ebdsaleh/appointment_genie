@@ -1,7 +1,9 @@
 # test_user.py
 import unittest
-from src.user.user import User, validate_email
+from src.user.user import User
 from src.booking.booking import Booking
+from src.contact.contact import Contact
+from src.utils.validators import validate_email
 from datetime import datetime
 from src.utils.auth import generate_pw_hash, verify_password
 
@@ -142,47 +144,9 @@ class TestUser(unittest.TestCase):
                 with self.assertRaises(TypeError):
                     User(None, None, invalid_value)
 
-    def test_validate_email_successul(self):
-        print("=== test_validate_email_sucessful")
-        email_0 = "my_test_email@my_mail.com"
-        email_1 = "my.test.email@my_mail.co.uk"
-        email_2 = "my_test_email@my_mail.xyz"
-
-        # Expected None if OK
-        self.assertEqual(validate_email(email_0), None)
-        self.assertEqual(validate_email(email_1), None)
-        self.assertEqual(validate_email(email_2), None)
-
-    def test_validate_email_failure(self):
-        print("=== test_validate_email_failure ===")
-        raises_value_errors = [
-                "", ' ', None, "my_bad_email.com", "my.email@bad",
-                "will_this.email.fail@", "broken@mymail.com."]
-        raises_type_errors = self.generic_string_type_error_values
-
-        # ValueError
-        for invalid_value in raises_value_errors:
-            with self.subTest(
-                    msg="Test values that will raise a ValueError exception " +
-                    "for the 'email' parameter in 'validate_email' function.",
-                    value=invalid_value):
-                with self.assertRaises(ValueError):
-                    validate_email(invalid_value)
-
-        # TypeError
-        for invalid_value in raises_type_errors:
-            with self.subTest(
-                    msg="Test values that will raise a TypeError execption " +
-                    "for the 'email' parameter in the 'validate_email' " +
-                    "function.",
-                    value=invalid_value):
-                with self.assertRaises(TypeError):
-                    validate_email(invalid_value)
-
     def test_contacts_property(self):
         print("=== test_contacts_property ===")
 
-        from src.contact.contact import Contact
         self.assertIsInstance(self.user.contacts, list)
         contact_name = "new_contact"
         contact_email = "new_contact@email.com"
@@ -199,7 +163,6 @@ class TestUser(unittest.TestCase):
     def test_add_contact(self):
         print("=== test_add_contact ===")
 
-        from src.contact.contact import Contact
         contact_name = "new_contact"
         contact_email = "new_contact@email.com"
         new_contact = Contact(contact_name, contact_email)
@@ -238,8 +201,6 @@ class TestUser(unittest.TestCase):
         time = (12, 30)
         contact_name = "test_contact"
         contact_email = "test_contact@appointment_genie.app"
-
-        from src.contact.contact import Contact
         new_contact = Contact(contact_name, contact_email)
         self.user.add_contact(new_contact)
         contact_name_1 = "My Friend"

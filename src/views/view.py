@@ -2,7 +2,7 @@
 import tkinter as tk
 from tkinter import ttk
 from src.utils.validators import validate_string_property, \
-    validate_int_tuple_property
+    validate_int_tuple_property, validate_int_property
 
 
 class View:
@@ -63,10 +63,7 @@ class View:
 
     @width.setter
     def width(self, value):
-        if value is None:
-            raise ValueError("'width must not be None.'")
-        if not isinstance(value, int):
-            raise TypeError("'width' must be an int.")
+        validate_int_property(value, 'width')
         self._width = value
         self._size = (self._width, self._height)
         if hasattr(self, 'tk'):
@@ -78,10 +75,7 @@ class View:
 
     @height.setter
     def height(self, value):
-        if value is None:
-            raise ValueError("'height' must not be None.")
-        if not isinstance(value, int):
-            raise TypeError("'height' must be an int.")
+        validate_int_property(value, 'height')
         self._height = value
         self._size = (self._width, self.height)
         if hasattr(self, 'tk'):
@@ -91,6 +85,8 @@ class View:
     def create_button(self, name="button", text="Click me", padx=0, pady=0):
         validate_string_property(name, 'name')
         validate_string_property(text, 'text')
+        validate_int_property(padx, 'padx')
+        validate_int_property(pady, 'pady')
         button = ttk.Button(self.tk, text=text)
         button.name = name
         button.pack(padx=padx, pady=pady)
@@ -117,12 +113,27 @@ class View:
     def create_entry_text_field(
             self, name="entry_text_field", width=30):
         validate_string_property(name, 'name')
-        if not isinstance(width, int):
-            raise TypeError("'width' must be an int.")
-        if width <= 10:
-            raise ValueError("'width' must be greater than 10.")
+        validate_int_property(width, 'width')
+        if width < 11:
+            raise ValueError("'width' must be greater than 10")
         entry_text_field = tk.Entry(self.tk, width=width)
         entry_text_field.name = name
         entry_text_field.pack()
         self.components.append({name: entry_text_field})
         return entry_text_field
+
+    def create_frame(
+            self, name="main_frame",
+            x=0, y=0,
+            width=100, height=100, **kwargs):
+        validate_string_property(name, 'name')
+        validate_int_property(x, 'x')
+        validate_int_property(y, 'y')
+        validate_int_property(width, 'width')
+        validate_int_property(height, 'height')
+        frame = ttk.Frame(self.tk, **kwargs)
+        frame.place(x=x, y=y, width=width, height=height)
+        frame.name = name
+        self.components.append({frame.name: frame})
+        return frame
+

@@ -273,6 +273,89 @@ class TestUtilsValidators(unittest.TestCase):
                     val.validate_string_dict_property(
                             {"test": "test_dict"}, invalid_value)
 
+    def test_validate_int_property(self):
+        print("=== test_validate_int_property ===")
+        test_int = 10
+        val.validate_int_property(test_int, 'test_int')
+        # Except None if successful
+        self.assertEqual(val.validate_int_property(test_int, 'test_int'), None)
+
+        # value - ValueError
+        raises_value_errors = [None, -1, -12, -1000]
+        for invalid_value in raises_value_errors:
+            with self.subTest(
+                msg="Test values that raise a ValueError exception " +
+                "with the 'value' parameter.",
+                    value=invalid_value):
+                with self.assertRaises(ValueError):
+                    val.validate_int_property(invalid_value, "test_int")
+
+        # value -TypeError
+        raises_type_errors = [1.2, -1.4, (1, 2, 3), (), {}, " ", "", val]
+        for invalid_value in raises_type_errors:
+            with self.subTest(
+                msg="Test values that raise a TypeError exception" +
+                "with the 'value' parameter.",
+                    value=invalid_value):
+                with self.assertRaises(TypeError):
+                    val.validate_int_property(invalid_value, "test_int")
+
+        # property_name - ValueError
+        raises_value_errors = [None, "", " "]
+        for invalid_value in raises_value_errors:
+            with self.subTest(
+                msg="Test values that raise a ValueError exception " +
+                "with the 'property_name' parameter.",
+                    value=invalid_value):
+                with self.assertRaises(ValueError):
+                    val.validate_int_property(10, invalid_value)
+
+        # property_name - TypeError
+        raises_type_errors = [10, 1.2, (), {}, val, [], (1, 2, 4)]
+        for invalid_value in raises_type_errors:
+            with self.subTest(
+                msg="Test values that raise a TypeError exception " +
+                "with the 'property_name' parameter",
+                    value=invalid_value):
+                with self.assertRaises(TypeError):
+                    val.validate_int_property(10, invalid_value)
+
+    def test_validate_email_successul(self):
+        print("=== test_validate_email_sucessful")
+        email_0 = "my_test_email@my_mail.com"
+        email_1 = "my.test.email@my_mail.co.uk"
+        email_2 = "my_test_email@my_mail.xyz"
+
+        # Expected None if OK
+        self.assertEqual(val.validate_email(email_0), None)
+        self.assertEqual(val.validate_email(email_1), None)
+        self.assertEqual(val.validate_email(email_2), None)
+
+    def test_validate_email_failure(self):
+        print("=== test_validate_email_failure ===")
+        raises_value_errors = [
+                "", ' ', None, "my_bad_email.com", "my.email@bad",
+                "will_this.email.fail@", "broken@mymail.com."]
+        raises_type_errors = [10, 1.2, (), {}, val, [], (1, 2, 4)]
+        # ValueError
+        for invalid_value in raises_value_errors:
+            with self.subTest(
+                    msg="Test values that will raise a ValueError exception " +
+                    "for the 'email' parameter in 'validate_email' function.",
+                    value=invalid_value):
+                with self.assertRaises(ValueError):
+                    val.validate_email(invalid_value)
+
+        # TypeError
+        for invalid_value in raises_type_errors:
+            with self.subTest(
+                    msg="Test values that will raise a TypeError execption " +
+                    "for the 'email' parameter in the 'validate_email' " +
+                    "function.",
+                    value=invalid_value):
+                with self.assertRaises(TypeError):
+                    val.validate_email(invalid_value)
+
 
 if __name__ == '__main__':
     unittest.main()
