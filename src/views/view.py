@@ -1,8 +1,10 @@
 # src/views/view.py
 import tkinter as tk
 from tkinter import ttk
+import tkinter.font as tkFont
 from src.utils.validators import validate_string_property, \
-    validate_int_tuple_property, validate_int_property
+    validate_int_tuple_property, validate_int_property, \
+    validate_string_tuple_property
 
 
 class View:
@@ -94,10 +96,23 @@ class View:
         validate_int_property(x, 'x')
         validate_int_property(y, 'y')
         parent = parent or self.frame
-        button = ttk.Button(parent, text=text)
+        button = tk.Button(parent, text=text)
         button.name = name
         button.place(x=x, y=y)
         self.components.append({name: button})
+        font_family = "Arial"
+        font_size = 9
+        font_style = ("normal", "roman", "no_underline")
+        button.font = [
+                {"family": font_family}, {"size": font_size},
+                {"weight": "bold" if font_style[0] == "bold" else "normal"},
+                {"slant": "italic" if font_style[1] == "italic" else "roman"},
+                {"underline": 1 if font_style[2] == "underline" else 0}
+                ]
+        self.set_font(
+                component_name=name, font_family=font_family,
+                font_size=font_size,
+                font_style=font_style)
         return button
 
     def get_component(self, component_name):
@@ -119,11 +134,21 @@ class View:
         label.name = name
         label.place(x=x, y=y)
         self.components.append({name: label})
+        font_family = "Arial"
+        font_size = 9
+        font_style = ("normal", "roman", "no_underline")
+        label.font = [
+                {"family": font_family}, {"size": font_size},
+                {"weight": "bold" if font_style[0] == "bold" else "normal"},
+                {"slant": "italic" if font_style[1] == "italic" else "roman"},
+                {"underline": 1 if font_style[2] == "underline" else 0}
+                ]
+        self.set_font(name, font_family, font_size, font_style)
         return label
 
     def create_entry_text_field(
             self, name="entry_text_field", width=30,
-            x=0, y=0, parent=None):
+            x=0, y=0, show=None, parent=None):
         validate_string_property(name, 'name')
         validate_int_property(width, 'width')
         if width < 11:
@@ -131,10 +156,22 @@ class View:
         validate_int_property(x, 'x')
         validate_int_property(y, 'y')
         parent = parent or self.frame
-        entry_text_field = tk.Entry(parent, width=width)
+        entry_text_field = tk.Entry(parent, width=width, show=show)
+
         entry_text_field.name = name
+        entry_text_field.show = show
         entry_text_field.place(x=x, y=y, width=width)
         self.components.append({name: entry_text_field})
+        font_family = "Arial"
+        font_size = 9
+        font_style = ("normal", "roman", "no_underline")
+        entry_text_field.font = [
+                {"family": font_family}, {"size": font_size},
+                {"weight": "bold" if font_style[0] == "bold" else "normal"},
+                {"slant": "italic" if font_style[1] == "italic" else "roman"},
+                {"underline": 1 if font_style[2] == "underline" else 0}
+                ]
+        self.set_font(name, font_family, font_size, font_style)
         return entry_text_field
 
     def create_frame(
@@ -151,3 +188,82 @@ class View:
         frame.name = name
         self.components.append({frame.name: frame})
         return frame
+
+    def set_font(
+            self, component_name,
+            font_family, font_size=10,
+            font_style=(
+                "normal",
+                "roman",
+                "no_underline")
+            ):
+        """
+            This method will set the font for Labels, and Buttons.
+            It also returns the component that the font is being applied to.
+            Returns None if the component doesn't exist in the self.components
+            list.
+            parameters:
+                component_name: str
+                font_family: str
+                font_size: int
+                font_style: tuple (str, str, str)
+            expected exceptions:
+                ValueError
+                TypeError
+            """
+        validate_string_property(component_name, 'component_name')
+        validate_string_property(font_family, 'font_family')
+        validate_int_property(font_size, 'font_size')
+        validate_string_tuple_property(font_style, 'font_style')
+
+        # Check if component exists
+        component = self.get_component(component_name)
+        if component is None:
+            raise ValueError(
+                    f"Could not find {component_name} in the component list.")
+
+        fonts = ["Arial", "Courier", "Helvetica", "Times", "Verdana"]
+        # Ensure font_style has the right number of elements
+        if len(font_style) > 3:
+            raise ValueError(
+                    "'font_style' must be a tuple of up to 3 elements.")
+        # Extend font_style to have 3 elements, filling in the defaults
+        default_styles = ["normal", "roman", "no_underline"]
+        font_style = tuple(font_style) + tuple(
+                default_styles[len(font_style):])
+
+        # Validate each style
+        valid_styles = {"weight": ["normal", "bold"],
+                        "slant": ["roman", "italic"],
+                        "underline": ["no_underline", "underline"]}
+        for i, style in enumerate(font_style):
+            if style not in valid_styles[list(valid_styles.keys())[i]]:
+                raise ValueError(f"Invalid value for font_style {style}")
+
+        # Check if font is supported
+        if font_family not in fonts:
+            raise ValueError(
+                    f"Could not find {font_family}, in supported font list.")
+
+        # Define a style
+        font = tkFont.Font(
+                family=font_family, size=font_size,
+                weight=font_style[0],
+                slant=font_style[1],
+                underline=1 if font_style[2] == "underline" else 0
+                )
+
+        # Apply the font
+        if isinstance(component, (tk.Button, ttk.Label, tk.Entry)):
+            component.configure(font=font)
+        else:
+            raise TypeError(
+                    f"Font setting not supported for {type(component)}.")
+
+        component.font = [
+                {"family": font_family}, {"size": font_size},
+                {"weight": font_style[0]},
+                {"slant": font_style[1]},
+                {"underline": 1 if font_style[2] == "underline" else 0}
+        ]
+        return component

@@ -166,3 +166,16 @@ def validate_email(email):
     if not is_email_OK:
         raise ValueError("Invalid 'email' format.")
 
+
+def validate_string_tuple_property(value, property_name):
+    if value is None:
+        raise ValueError(f"'{property_name}' must not be None.")
+    if not is_valid_tuple(value):
+        raise TypeError(f"'{property_name}' must be a string tuple.")
+    if is_valid_tuple(value) and len(value) == 0:
+        raise ValueError(f"{property_name} must not be an empty tuple.")
+
+    validate_string_property(property_name, 'property_name')
+
+    for x in value:
+        validate_string_property(x, property_name)

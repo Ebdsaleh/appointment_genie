@@ -11,6 +11,7 @@ class TestView(unittest.TestCase):
         self.view = View()
 
     def tearDown(self):
+        self.view.tk.destroy()
         self.view = None
 
     def test_create_view_with_default_values(self):
@@ -136,7 +137,7 @@ class TestView(unittest.TestCase):
 
     def test_create_button(self):
         button = self.view.create_button()
-        self.assertIsInstance(button, ttk.Button)
+        self.assertIsInstance(button, tk.Button)
         self.assertEqual(button.name, "button")
         self.assertEqual(button.cget('text'), "Click me")
         self.assertEqual(button.place_info().get('x', 0), str(0))
@@ -153,7 +154,7 @@ class TestView(unittest.TestCase):
         self.assertEqual(button.cget("text"), "Click me")
         self.assertEqual(button.place_info().get('x', 10), str(10))
         self.assertEqual(button.place_info().get('y', 0), str(0))
-        self.assertIsInstance(self.view.get_component("my_button"), ttk.Button)
+        self.assertIsInstance(self.view.get_component("my_button"), tk.Button)
         self.assertTrue(len(self.view.components), 2)
 
         # Check for non exisitent values
@@ -215,6 +216,7 @@ class TestView(unittest.TestCase):
         entry_text = self.view.create_entry_text_field("test_entry")
         self.assertIsInstance(entry_text, tk.Entry)
         self.assertIsNotNone(entry_text)
+        self.assertEqual(entry_text.show, None)
         self.assertEqual(entry_text.name, 'test_entry')
         self.assertEqual(len(self.view.components), 2)
 
@@ -255,6 +257,138 @@ class TestView(unittest.TestCase):
                 with self.assertRaises(TypeError):
                     self.view.create_entry_text_field(
                             "test_entry", invalid_value)
+
+    def test_set_font_successful(self):
+        print("=== test_set_font_successful ==")
+        # create a label to test with
+        lbl_test = self.view.create_label(
+                name="lbl_test", text="test_font", x=10, y=10)
+
+        self.assertIsInstance(lbl_test, ttk.Label)
+        self.assertIsInstance(lbl_test.font, list)
+        # Testing the default values
+        self.assertIn({'family': "Arial"}, lbl_test.font)
+        self.assertIn({'size': 9}, lbl_test.font)
+        self.assertIn({'weight': "normal"}, lbl_test.font)
+        self.assertIn({'slant': "roman"}, lbl_test.font)
+        self.assertIn({'underline': 0}, lbl_test.font)
+
+        # Testing with manual values, ommiting the font_style tuple
+        self.view.set_font(
+                component_name=lbl_test.name,
+                font_family="Arial",
+                font_size=14
+                )
+        self.assertIn({'family': "Arial"}, lbl_test.font)
+        self.assertIn({'size': 14}, lbl_test.font)
+        self.assertIn({'weight': "normal"}, lbl_test.font)
+        self.assertIn({'slant': "roman"}, lbl_test.font)
+        self.assertIn({'underline': 0}, lbl_test.font)
+
+        # Testing with manual values with a complete font_style tuple
+        self.view.set_font(
+                component_name=lbl_test.name,
+                font_family="Verdana",
+                font_size=16,
+                font_style=("bold", "roman", "no_underline"))
+        self.assertIn({'family': "Verdana"}, lbl_test.font)
+        self.assertIn({'size': 16}, lbl_test.font)
+        self.assertIn({'weight': "bold"}, lbl_test.font)
+        self.assertIn({'slant': "roman"}, lbl_test.font)
+        self.assertIn({'underline': 0}, lbl_test.font)
+
+        # Testing with manual values with an incomplete font_style tuple
+        '''NOTE: font_style values must be in order.
+            weight, slant, underline.
+            Failure to follow this will result in a ValueError.
+            e.g. 'bold', 'underline' will fail,
+            'italic', 'bold' will fail,
+            'underline', 'bold', 'italic' will also fail.
+            '''
+        self.view.set_font(
+                component_name=lbl_test.name,
+                font_family="Helvetica",
+                font_size=16,
+                font_style=("bold", 'roman'))
+        self.assertIn({'family': "Helvetica"}, lbl_test.font)
+        self.assertIn({'size': 16}, lbl_test.font)
+        self.assertIn({'weight': "bold"}, lbl_test.font)
+        self.assertIn({'slant': "roman"}, lbl_test.font)
+        self.assertIn({'underline': 0}, lbl_test.font)
+
+    def test_set_font_failure(self):
+        print("=== test_set_font_failure ===")
+        # Successful implementation
+        self.view.create_label("lbl_test", x=0, y=0)
+        lbl_test = self.view.set_font(
+                "lbl_test", "Verdana", 14, (
+                    "normal", "italic", "no_underline"))
+        self.assertIn({'family': "Verdana"}, lbl_test.font)
+        self.assertIn({'size': 14}, lbl_test.font)
+        self.assertIn({'weight': "normal"}, lbl_test.font)
+        self.assertIn({'slant': "italic"}, lbl_test.font)
+        self.assertIn({'underline': 0}, lbl_test.font)
+
+        # Failure
+        # name, font_family, font_style - ValueErrors
+        raises_str_value_errors = [None, "", " "]
+        for invalid_value in raises_str_value_errors:
+            with self.subTest(
+                msg="Test values that raise a ValueError exception for the " +
+                "'name', 'font_family', 'font_style' parameters.",
+                    value=invalid_value):
+                with self.assertRaises(ValueError):
+                    self.view.set_font(invalid_value, "Verdana", 14, (
+                        "normal", "italic", "no_underline"))
+                    self.view.set_font("lbl_test", invalid_value, 14, (
+                        "normal", "italic", "no_underline"))
+                    self.view.set_font("lbl_test", "Verdana", 14, (
+                        invalid_value, "italic", "no_underline"))
+                    self.view.set_font("lbl_test", "Verdana", 14, (
+                        "normal", invalid_value, "no_underline"))
+                    self.view.set_font("lbl_test", "Verdana", 14, (
+                        "normal", "italic", invalid_value))
+
+        # name, font_family, font_style - TypeErrors
+        raises_str_type_errors = [1, 2.3, [], (), {}, self.view]
+        for invalid_value in raises_str_type_errors:
+            with self.subTest(
+                msg="Test values that raise a TypeError exception for the" +
+                "'name', 'font_family', 'font_style' parameters.",
+                    value=invalid_value):
+                with self.assertRaises(TypeError):
+                    self.view.set_font(invalid_value, "Verdana", 14, (
+                        "normal", "italic", "no_underline"))
+                    self.view.set_font("lbl_test", invalid_value, 14, (
+                        "normal", "italic", "no_underline"))
+                    self.view.set_font("lbl_test", "Verdana", 14, (
+                        invalid_value, "italic", "no_underline"))
+                    self.view.set_font("lbl_test", "Verdana", 14, (
+                        "normal", invalid_value, "no_underline"))
+                    self.view.set_font("lbl_test", "Verdana", 14, (
+                        "normal", "italic", invalid_value))
+
+        # font_size - ValueErrors
+        raises_int_value_errors = [None, -1]
+        for invalid_value in raises_int_value_errors:
+            with self.subTest(
+                msg="Test values that raise a ValueError exception for the" +
+                "'font_size' parameter.",
+                    value=invalid_value):
+                with self.assertRaises(ValueError):
+                    self.view.set_font("lbl_test", "Verdana", invalid_value, (
+                        "normal", "italic", "no_underline"))
+
+        # font_size - TypeErrors
+        raises_int_type_errors = [2.1, [], " ", (), {}, self.view]
+        for invalid_value in raises_int_type_errors:
+            with self.subTest(
+                msg="Test values that raise a TypeError exception for the" +
+                "'font_size' parameter.",
+                    value=invalid_value):
+                with self.assertRaises(TypeError):
+                    self.view.set_font("lbl_test", "Verdana", invalid_value, (
+                        "normal", "italic", "no_underline"))
 
 
 if __name__ == '__main__':

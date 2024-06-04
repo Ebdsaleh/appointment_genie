@@ -356,6 +356,70 @@ class TestUtilsValidators(unittest.TestCase):
                 with self.assertRaises(TypeError):
                     val.validate_email(invalid_value)
 
+    def test_validate_string_tuple_property_success(self):
+        print("=== test_validate_string_tuple_property ===")
+        test_string_tuple = ("testing", "string", "tuple")
+        # Expect None if OK
+        self.assertEqual(
+                val.validate_string_tuple_property(
+                    test_string_tuple, "test_string"), None)
+
+    def test_validate_string_tuple_property_failure_value_parameter(self):
+        t_name = "test_validate_string_tuple_property_failure_value_parameter"
+        print(f"=== {t_name} ===")
+        test_string = "test_string"
+        # value - ValueError
+        raises_value_errors = [(), ("", " ", None)]
+        for invalid_value in raises_value_errors:
+            with self.subTest(
+                msg="Test values that raise a ValueError exception " +
+                "with the 'value' parameter.",
+                    value=invalid_value):
+                with self.assertRaises(ValueError):
+                    val.validate_string_tuple_property(
+                            invalid_value, test_string)
+        # value - TypeError
+        raises_type_errors = [{}, (1, 2, 3), " ", "", 3, 2.4, val, []]
+        for invalid_value in raises_type_errors:
+            with self.subTest(
+                msg="Test values that raise a TypeError exception " +
+                "with the 'value' parameter.",
+                    value=invalid_value):
+                with self.assertRaises(TypeError):
+                    val.validate_string_tuple_property(
+                            invalid_value, test_string)
+
+    def test_validate_string_tuple_property_failure_property_name_parameter(
+            self):
+        t_name = str(
+                "test_validate_string_tuple_property_failure" +
+                "_property_name_parameter")
+        print(f"=== {t_name} ===")
+        test_string_tuple = ("testing", "string", "tuple")
+
+        # property_name - ValueError
+        raises_value_errors = [None, "", " "]
+        for invalid_value in raises_value_errors:
+            with self.subTest(
+                msg="Test values that raise a ValueError exception " +
+                "with the 'property_name' parameter.",
+                    value=invalid_value):
+                with self.assertRaises(ValueError):
+                    val.validate_string_tuple_property(
+                            test_string_tuple, invalid_value)
+
+        # property_name - TypeError
+        raises_type_errors = [
+                1, 2.4, -1, -2.4, (), (1, 2, 3), [], ["hey", "there"], {}, val]
+        for invalid_value in raises_type_errors:
+            with self.subTest(
+                msg="Test values that raise a TypeError exception " +
+                "with the 'property_name' parameter.",
+                    value=invalid_value):
+                with self.assertRaises(TypeError):
+                    val.validate_string_tuple_property(
+                            test_string_tuple, invalid_value)
+
 
 if __name__ == '__main__':
     unittest.main()
