@@ -90,14 +90,16 @@ class View:
             name="button",
             text="Click me",
             x=0, y=0,
+            command=None,
             parent=None):
         validate_string_property(name, 'name')
         validate_string_property(text, 'text')
         validate_int_property(x, 'x')
         validate_int_property(y, 'y')
         parent = parent or self.frame
-        button = tk.Button(parent, text=text)
+        button = tk.Button(parent, text=text, command=command)
         button.name = name
+        button.command = command
         button.place(x=x, y=y)
         self.components.append({name: button})
         font_family = "Arial"

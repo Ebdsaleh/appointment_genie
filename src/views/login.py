@@ -21,7 +21,10 @@ class Login(View):
                 name="txt_username", x=120, y=130, width=170)
         self.create_entry_text_field(
                 name="txt_password", x=120, y=180, width=170, show="*")
-        self.create_button(name="btn_submit", text="Submit", x=210, y=230)
+        self.create_button(
+                name="btn_submit", text="Submit",
+                x=210, y=230,
+                command=self.submit)
         # make it look prettier
         self.set_font(
                 "lbl_login", "Arial", 18,
@@ -35,3 +38,7 @@ class Login(View):
         self.set_font(
                 "btn_submit", "Arial", 14,
                 ("normal", "roman", "no_underline"))
+
+    def submit(self):
+        pw = self.get_component('txt_password').get()
+        return pw

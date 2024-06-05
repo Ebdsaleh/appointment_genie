@@ -140,6 +140,7 @@ class TestView(unittest.TestCase):
         self.assertIsInstance(button, tk.Button)
         self.assertEqual(button.name, "button")
         self.assertEqual(button.cget('text'), "Click me")
+        self.assertEqual(button.command, None)
         self.assertEqual(button.place_info().get('x', 0), str(0))
         self.assertEqual(button.place_info().get('y', 0), str(0))
         self.assertEqual(

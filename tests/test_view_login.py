@@ -39,18 +39,20 @@ class TestViewLogin(unittest.TestCase):
         print("=== test_setup_ui ===")
         # setup_ui is called during the __init__() method of the class.
         # So no need to invoke it explicitly here.
-        default_key_iter = iter(self.default_component_keys)
-        default_inst_iter = iter(self.default_component_instances)
-        login_components_iter = iter(self.login.components)
 
-        for i in range(0, len(self.login.components)):
-            comp_key = next(default_key_iter)
-            login_comp_keys = next(login_components_iter).keys()
-            comp_inst = next(default_inst_iter)
-            self.assertIn(comp_key, login_comp_keys)
+        for i, comp_key in enumerate(self.default_component_keys):
+            component = self.login.get_component(comp_key)
             self.assertIsInstance(
-                    self.login.components[i][self.default_component_keys[i]],
-                    comp_inst)
+                    component, self.default_component_instances[i])
+
+    def test_submit(self):
+        print("=== test_submit ===")
+        password_entry = self.login.get_component('txt_password')
+        submit_button = self.login.get_component('btn_submit')
+        test_password = "testpassword"
+        password_entry.insert(0, test_password)
+        submit_button.invoke()
+        self.assertEqual(self.login.submit(), test_password)
 
 
 if __name__ == '__main__':
