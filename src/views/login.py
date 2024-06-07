@@ -40,5 +40,11 @@ class Login(View):
                 ("normal", "roman", "no_underline"))
 
     def submit(self):
+        """
+        This method (at the moment) the entered password inside the
+        'txt_passeword' 'entry_text_field'. It is bound to the 'btn_submit'
+        tk.Button.
+        I'm thinking there needs to be a event manager to handle GUI events,
+        this will allow forms/views to change in fluid manner."""
         pw = self.get_component('txt_password').get()
         return pw
