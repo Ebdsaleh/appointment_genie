@@ -2,7 +2,9 @@
 import unittest
 from src.views.view import View
 import tkinter as tk
-from tkinter import ttk
+from tkinter import ttk as ttk
+import datetime
+from tkcalendar import DateEntry
 
 
 class TestView(unittest.TestCase):
@@ -258,6 +260,43 @@ class TestView(unittest.TestCase):
                 with self.assertRaises(TypeError):
                     self.view.create_entry_text_field(
                             "test_entry", invalid_value)
+
+    def test_create_dropdown(self):
+        print("=== test_create_dropdown ===")
+        dropdown = self.view.create_dropdown()
+        self.assertIsNotNone(dropdown)
+        self.assertIsInstance(dropdown, ttk.Combobox)
+        self.assertEqual(dropdown.name, "dropdown")
+        self.assertEqual(dropdown.x, 0)
+        self.assertEqual(dropdown.y, 0)
+        self.assertEqual(dropdown.values, ["Option 1", "Option 2", "Option 3"])
+        self.assertEqual(dropdown.width, 20)
+        self.assertEqual(dropdown.textvariable.get(), "")
+
+    def test_create_spinbox(self):
+        print("=== test_create_spinbox ===")
+        spinbox = self.view.create_spinbox()
+        self.assertIsNotNone(spinbox)
+        self.assertIsInstance(spinbox, tk.Spinbox)
+        self.assertEqual(spinbox.name, "spinbox")
+        self.assertEqual(spinbox.x, 0)
+        self.assertEqual(spinbox.y, 0)
+        self.assertEqual(spinbox.from_, 0)
+        self.assertEqual(spinbox.to, 100)
+        self.assertEqual(spinbox.increment, 1)
+        self.assertEqual(spinbox.width, 20)
+        self.assertEqual(spinbox.textvariable.get(), "0")
+
+    def test_create_calendar(self):
+        print("=== test_create_calendar ===")
+        calendar = self.view.create_calender()
+        self.assertIsNotNone(calendar)
+        self.assertIsInstance(calendar, DateEntry)
+        self.assertEqual(calendar.name, "calendar")
+        calendar.set_date("5/6/24")
+        # should return a datetime.date(2024, 6, 5)
+        self.assertEqual(calendar.get_date(), datetime.date(2024, 6, 5))
+        calendar.destroy()
 
     def test_set_font_successful(self):
         print("=== test_set_font_successful ==")

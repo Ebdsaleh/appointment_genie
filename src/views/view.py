@@ -2,6 +2,7 @@
 import tkinter as tk
 from tkinter import ttk
 import tkinter.font as tkFont
+from tkcalendar import DateEntry
 from src.utils.validators import validate_string_property, \
     validate_int_tuple_property, validate_int_property, \
     validate_string_tuple_property
@@ -188,8 +189,85 @@ class View:
         frame = ttk.Frame(self.tk, **kwargs)
         frame.place(x=x, y=y, width=width, height=height)
         frame.name = name
+        frame.x = x
+        frame.y = y
+        frame.width = width
+        frame.height = height
         self.components.append({frame.name: frame})
         return frame
+
+    def create_dropdown(
+            self, name="dropdown",
+            x=0, y=0,
+            values=["Option 1", "Option 2", "Option 3"],
+            width=20, parent=None
+            ):
+        validate_string_property(name, 'name')
+        validate_int_property(x, 'x')
+        validate_int_property(y, 'y')
+        for value in values:
+            validate_string_property(value, 'values')
+        validate_int_property(width, 'width')
+        parent = parent or self.frame
+        var = tk.StringVar()
+        dropdown = ttk.Combobox(
+                parent, textvariable=var, values=values, width=width)
+        dropdown.place(x=x, y=y)
+        dropdown.name = name
+        dropdown.x = x
+        dropdown.y = y
+        dropdown.width = width
+        dropdown.values = values
+        dropdown.textvariable = var
+        self.components.append({dropdown.name: dropdown})
+        return dropdown
+
+    def create_spinbox(
+            self, name="spinbox", x=0, y=0,
+            from_=0, to=100, increment=1, width=20, parent=None
+            ):
+        validate_string_property(name, 'name')
+        validate_int_property(x, 'x')
+        validate_int_property(y, 'y')
+        validate_int_property(from_, 'from_')
+        validate_int_property(to, 'to')
+        validate_int_property(increment, 'increment')
+        validate_int_property(width, 'width')
+        parent = parent or self.frame
+        var = tk.StringVar()
+        numvar = tk.IntVar()
+        spinbox = tk.Spinbox(
+                parent, from_=from_, to=to, increment=increment,
+                width=width, textvariable=var)
+        spinbox.place(x=x, y=y)
+        spinbox.name = name
+        spinbox.x = x
+        spinbox.y = y
+        spinbox.from_ = from_
+        spinbox.to = to
+        spinbox.increment = increment
+        spinbox.width = width
+        spinbox.textvariable = var
+        spinbox.numvar = numvar
+        self.components.append({spinbox.name: spinbox})
+        return spinbox
+
+    def create_calender(self,
+                        name="calendar",
+                        x=0, y=0, width=20,
+                        parent=None):
+        validate_string_property(name, 'name')
+        validate_int_property(x, 'x')
+        validate_int_property(y, 'y')
+        validate_int_property(width, 'width')
+        parent = parent or self.frame
+        calendar = DateEntry(
+                master=parent, width=width)
+        calendar.name = name
+        calendar.drop_down()
+        calendar.place(x=x, y=y)
+        self.components.append({calendar.name: calendar})
+        return calendar
 
     def set_font(
             self, component_name,
