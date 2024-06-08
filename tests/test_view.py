@@ -261,11 +261,17 @@ class TestView(unittest.TestCase):
                     self.view.create_entry_text_field(
                             "test_entry", invalid_value)
 
-    def test_create_dropdown(self):
-        print("=== test_create_dropdown ===")
+    def test_create_dropdown_successful(self):
+        print("=== test_create_dropdown_successful ===")
         dropdown = self.view.create_dropdown()
         self.assertIsNotNone(dropdown)
         self.assertIsInstance(dropdown, ttk.Combobox)
+        self.assertIsInstance(dropdown.name, str)
+        self.assertIsInstance(dropdown.x, int)
+        self.assertIsInstance(dropdown.y, int)
+        self.assertIsInstance(dropdown.values, list)
+        self.assertIsInstance(dropdown.width, int)
+        self.assertIsInstance(dropdown.textvariable, tk.StringVar)
         self.assertEqual(dropdown.name, "dropdown")
         self.assertEqual(dropdown.x, 0)
         self.assertEqual(dropdown.y, 0)
@@ -273,11 +279,68 @@ class TestView(unittest.TestCase):
         self.assertEqual(dropdown.width, 20)
         self.assertEqual(dropdown.textvariable.get(), "")
 
+    def test_create_dropdown_failure(self):
+        print("=== test_create_dropdown_failure ===")
+        # name, values ValueError
+        raises_value_errors = [None, "", " "]
+        for invalid_value in raises_value_errors:
+            with self.subTest(
+                msg="Test values that raise a ValueError exception " +
+                "with the 'name'and 'values' parameters.",
+                    value=invalid_value):
+                with self.assertRaises(ValueError):
+                    self.view.create_dropdown(name=invalid_value)
+        with self.assertRaises(ValueError):
+            self.view.create_dropdown(values=raises_value_errors)
+        # name, values TypeError
+        raises_type_errors = [1, 2.1, (), [], {}, tk, tk.StringVar]
+        for invalid_value in raises_type_errors:
+            with self.subTest(
+                msg="Test values that raise a TypeError exception " +
+                "with the 'name' and 'values' parameters.",
+                    value=invalid_value):
+                with self.assertRaises(TypeError):
+                    self.view.create_dropdown(name=invalid_value)
+        with self.assertRaises(TypeError):
+            self.view.create_dropdown(values=raises_type_errors)
+        # x, y, width ValueError
+        raises_value_errors = [None, -1]
+        for invalid_value in raises_value_errors:
+            with self.subTest(
+                msg="Test values that raise a ValueError exception " +
+                "with the 'x', 'y', and 'width' parameters.",
+                    value=invalid_value):
+                with self.assertRaises(ValueError):
+                    self.view.create_dropdown(x=invalid_value)
+                    self.view.create_dropdown(y=invalid_value)
+                    self.view.create_dropdown(width=invalid_value)
+        # x, y, with TypeError
+        raises_type_errors = [
+                2.2, " ", {}, [], (), tk, tk.IntVar, tk.StringVar]
+        for invalid_value in raises_type_errors:
+            with self.subTest(
+                msg="Test values that raise a TypeError exception " +
+                "with 'x', 'y', and 'width' parameters.",
+                    value=invalid_value):
+                with self.assertRaises(TypeError):
+                    self.view.create_dropdown(x=invalid_value)
+                    self.view.create_dropdown(y=invalid_value)
+                    self.view.create_dropdown(width=invalid_value)
+
     def test_create_spinbox(self):
         print("=== test_create_spinbox ===")
         spinbox = self.view.create_spinbox()
         self.assertIsNotNone(spinbox)
         self.assertIsInstance(spinbox, tk.Spinbox)
+        self.assertIsInstance(spinbox.name, str)
+        self.assertIsInstance(spinbox.x, int)
+        self.assertIsInstance(spinbox.y, int)
+        self.assertIsInstance(spinbox.from_, int)
+        self.assertIsInstance(spinbox.to, int)
+        self.assertIsInstance(spinbox.increment, int)
+        self.assertIsInstance(spinbox.width, int)
+        self.assertIsInstance(spinbox.textvariable, tk.StringVar)
+        self.assertIsInstance(spinbox.numvar, tk.IntVar)
         self.assertEqual(spinbox.name, "spinbox")
         self.assertEqual(spinbox.x, 0)
         self.assertEqual(spinbox.y, 0)
@@ -286,12 +349,14 @@ class TestView(unittest.TestCase):
         self.assertEqual(spinbox.increment, 1)
         self.assertEqual(spinbox.width, 20)
         self.assertEqual(spinbox.textvariable.get(), "0")
+        self.assertEqual(spinbox.numvar.get(), 0)
 
     def test_create_calendar(self):
         print("=== test_create_calendar ===")
         calendar = self.view.create_calender()
         self.assertIsNotNone(calendar)
         self.assertIsInstance(calendar, DateEntry)
+        self.assertIsInstance(calendar.name, str)
         self.assertEqual(calendar.name, "calendar")
         calendar.set_date("5/6/24")
         # should return a datetime.date(2024, 6, 5)

@@ -19,7 +19,6 @@ class TestViewCreateBooking(unittest.TestCase):
                 ttk.Combobox, tk.Spinbox, tk.Spinbox, DateEntry, tk.Button,
                 tk.Button]
 
-   
     def test_view_create_default_paramters(self):
         print("=== test_view_create_default_paramters ===")
         self.assertIsInstance(self.create_booking, CreateBooking)
