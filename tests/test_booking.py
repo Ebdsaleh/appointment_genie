@@ -15,9 +15,6 @@ class TestBooking(unittest.TestCase):
         self.invalid_int_tuple_values = [
                 92, 2.1, [], [1, 2, 3], {"time": "3:30"}, "20:12"]
 
-    def tearDown(self):
-        self.booking = None
-
     def test_create_booking_successful(self):
         print("=== test_create_booking_successful ===")
         # Arrange
@@ -192,6 +189,9 @@ class TestBooking(unittest.TestCase):
             "contact='New Contact', " +
             "description='Enter a description.')")
         self.assertEqual(self.booking.__repr__(), expected_repr_str)
+
+    def tearDown(self):
+        self.booking = None
 
 
 if __name__ == '__main__':

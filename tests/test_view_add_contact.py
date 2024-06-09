@@ -17,10 +17,6 @@ class TestViewAddContact(unittest.TestCase):
                 ttk.Frame, ttk.Label, ttk.Label, ttk.Label, tk.Entry, tk.Entry,
                 tk.Button, tk.Button]
 
-    def tearDown(self):
-        self.view_add_contact.tk.destroy()
-        self.view_add_contact = None
-
     def test_create_add_contact_default_parameters(self):
         print("=== test_create_add_contact_default_parameters ===")
         self.assertTrue(issubclass(AddContact, View))
@@ -63,3 +59,11 @@ class TestViewAddContact(unittest.TestCase):
 
         self.assertEqual(name_entry.get(), '')
         self.assertEqual(email_entry.get(), '')
+
+    def tearDown(self):
+        self.view_add_contact.tk.destroy()
+        self.view_add_contact = None
+
+
+if __name__ == '__main__':
+    unittest.main()

@@ -17,12 +17,6 @@ class TestViewLogin(unittest.TestCase):
                 ttk.Frame, ttk.Label, ttk.Label, ttk.Label, tk.Entry, tk.Entry,
                 tk.Button]
 
-    def tearDown(self):
-        self.login.tk.destroy()
-        self.login = None
-        self.defaulf_component_keys = None
-        self.default_component_instances = None
-
     def test_create_login_default_parameters(self):
         print("=== test_create_login ===")
         self.assertIsInstance(self.login, Login)
@@ -53,6 +47,12 @@ class TestViewLogin(unittest.TestCase):
         password_entry.insert(0, test_password)
         submit_button.invoke()
         self.assertEqual(self.login.submit(), test_password)
+
+    def tearDown(self):
+        self.login.tk.destroy()
+        self.login = None
+        self.defaulf_component_keys = None
+        self.default_component_instances = None
 
 
 if __name__ == '__main__':

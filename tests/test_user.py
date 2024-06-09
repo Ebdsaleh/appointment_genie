@@ -18,12 +18,6 @@ class TestUser(unittest.TestCase):
                 1, 2.2, [2, 3], {}, ()]
         self.generic_string_value_error_values = [None, "", " "]
 
-    def tearDown(self):
-        self.user = None
-        self.pw_hash = None
-        self.password = None
-        self.generic_string_type_error_values = None
-
     def test_create_user_with_default_values(self):
         print("=== test_create_user_with_defaul_values ===")
         # Type assertions
@@ -218,6 +212,12 @@ class TestUser(unittest.TestCase):
         self.assertEqual(len(self.user.contacts), 2)
         self.assertIsInstance(self.user.contacts[0], Contact)
         self.assertIsInstance(self.user.contacts[1], Contact)
+
+    def tearDown(self):
+        self.user = None
+        self.pw_hash = None
+        self.password = None
+        self.generic_string_type_error_values = None
 
 
 if __name__ == '__main__':

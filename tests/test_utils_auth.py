@@ -12,9 +12,6 @@ class TestAuth(unittest.TestCase):
         self.generic_string_type_error_values = [
                 1, 2.2, [2, 3], {}, ()]
 
-    def tearDown(self):
-        print("End of testing 'src/utils/auth.py'")
-
     def test_verify_password_success(self):
         print("=== test_verify_password_success ===")
         self.assertIsInstance(verify_password(self.pw_hash, self.pw), bool)
@@ -95,6 +92,12 @@ class TestAuth(unittest.TestCase):
                               value=invalid_value):
                 with self.assertRaises(TypeError):
                     generate_pw_hash(invalid_value)
+
+    def tearDown(self):
+        print("End of testing 'src/utils/auth.py'")
+        self.pw = None
+        self.pw_hash = None
+        self.generic_string_type_error_values = None
 
 
 if __name__ == '__main__':

@@ -12,10 +12,6 @@ class TestView(unittest.TestCase):
     def setUp(self):
         self.view = View()
 
-    def tearDown(self):
-        self.view.tk.destroy()
-        self.view = None
-
     def test_create_view_with_default_values(self):
         print("=== test_create_view ===")
         self.assertIsInstance(self.view, View)
@@ -279,30 +275,40 @@ class TestView(unittest.TestCase):
         self.assertEqual(dropdown.width, 20)
         self.assertEqual(dropdown.textvariable.get(), "")
 
-    def test_create_dropdown_failure(self):
-        print("=== test_create_dropdown_failure ===")
-        # name, values ValueError
+    def test_create_dropdown_failure_name_parameter(self):
+        print("=== test_create_dropdown_failure_name_parameter ===")
+        # name - ValueError
         raises_value_errors = [None, "", " "]
         for invalid_value in raises_value_errors:
             with self.subTest(
                 msg="Test values that raise a ValueError exception " +
-                "with the 'name'and 'values' parameters.",
+                "with the 'name' parameter.",
                     value=invalid_value):
                 with self.assertRaises(ValueError):
                     self.view.create_dropdown(name=invalid_value)
-        with self.assertRaises(ValueError):
-            self.view.create_dropdown(values=raises_value_errors)
-        # name, values TypeError
+        # name - TypeError
         raises_type_errors = [1, 2.1, (), [], {}, tk, tk.StringVar]
         for invalid_value in raises_type_errors:
             with self.subTest(
                 msg="Test values that raise a TypeError exception " +
-                "with the 'name' and 'values' parameters.",
+                "with the 'name' parameter.",
                     value=invalid_value):
                 with self.assertRaises(TypeError):
                     self.view.create_dropdown(name=invalid_value)
+
+    def test_create_dropdown_failure_values_parameter(self):
+        print("=== test_create_dropdown_failure_values_parameter ===")
+        # values - ValueError
+        raises_value_errors = [None, "", " "]
+        with self.assertRaises(ValueError):
+            self.view.create_dropdown(values=raises_value_errors)
+        # values - TypeError
+        raises_type_errors = [1, 2.1, (), [], {}, tk, tk.StringVar]
         with self.assertRaises(TypeError):
             self.view.create_dropdown(values=raises_type_errors)
+
+    def test_create_dropdown_failure_int_parameters(self):
+        print("=== test_create_dropdown_failure_int_parameters ===")
         # x, y, width ValueError
         raises_value_errors = [None, -1]
         for invalid_value in raises_value_errors:
@@ -327,6 +333,7 @@ class TestView(unittest.TestCase):
                     self.view.create_dropdown(y=invalid_value)
                     self.view.create_dropdown(width=invalid_value)
 
+    # create_spinbox
     def test_create_spinbox(self):
         print("=== test_create_spinbox ===")
         spinbox = self.view.create_spinbox()
@@ -351,17 +358,145 @@ class TestView(unittest.TestCase):
         self.assertEqual(spinbox.textvariable.get(), "0")
         self.assertEqual(spinbox.numvar.get(), 0)
 
-    def test_create_calendar(self):
-        print("=== test_create_calendar ===")
+    def test_create_spinbox_failure_name_parameter(self):
+        print("=== test_create_spinbox_failure_name_parameter ===")
+        # name - ValueError
+        raises_value_errors = [None, "",  " "]
+        for invalid_value in raises_value_errors:
+            with self.subTest(
+                msg="Test values that rasie a ValueError exception " +
+                "with the 'name' parameter.",
+                    value=invalid_value):
+                with self.assertRaises(ValueError):
+                    self.view.create_spinbox(name=invalid_value)
+        # name - TypeError
+        raises_type_errors = [2, 1.2, (), [], {}, tk, tk.StringVar, tk.IntVar]
+        for invalid_value in raises_type_errors:
+            with self.subTest(
+                msg="Test values that raise a TypeError exception " +
+                "with the 'name' parameter.",
+                    value=invalid_value):
+                with self.assertRaises(TypeError):
+                    self.view.create_spinbox(name=invalid_value)
+
+    def test_create_spinbox_failure_value_errors_int_parameters(self):
+        t_name = str("test_create_spinbox_failure_value_errors_int_parameters")
+        print(f"=== {t_name} ===")
+        # x, y, from_, to, increment, width - ValueError
+        raises_value_errors = [None, -1]
+        for invalid_value in raises_value_errors:
+            with self.subTest(
+                msg="Test values the raise a ValueError " +
+                "with the 'x', 'y', 'from_', 'to', 'increment', " +
+                "and 'width' parameters.",
+                    value=invalid_value):
+                with self.assertRaises(ValueError):
+                    self.view.create_spinbox(x=invalid_value)
+                    self.view.create_spinbox(y=invalid_value)
+                    self.view.create_spinbox(from_=invalid_value)
+                    self.view.create_spinbox(to=invalid_value)
+                    self.view.create_spinbox(increment=invalid_value)
+                    self.view.create_spinbox(width=invalid_value)
+
+    def test_create_spinbox_failure_type_errors_int_parameters(self):
+        t_name = str("test_create_spinbox_failure_type_errors_int_parameters")
+        print(f"=== {t_name} ===")
+        # x, y, from_, to, increment, width - TypeError
+        raises_type_errors = [
+            "test", " ", "", 2.1, (), (1,), (1, 2, 3), {}, [], [1,], [1, 2,],
+            tk, tk.StringVar, tk.IntVar]
+        for invalid_value in raises_type_errors:
+            with self.subTest(
+                msg="Test values the raise a TypeError " +
+                "with the 'x', 'y', 'from_', 'to', 'increment', " +
+                "and 'width' parameters.",
+                    value=invalid_value):
+                with self.assertRaises(TypeError):
+                    self.view.create_spinbox(x=invalid_value)
+                    self.view.create_spinbox(y=invalid_value)
+                    self.view.create_spinbox(from_=invalid_value)
+                    self.view.create_spinbox(to=invalid_value)
+                    self.view.create_spinbox(increment=invalid_value)
+                    self.view.create_spinbox(width=invalid_value)
+
+    # create_calendar
+    def test_create_calendar_successful(self):
+        print("=== test_create_calendar_successful ===")
         calendar = self.view.create_calender()
         self.assertIsNotNone(calendar)
         self.assertIsInstance(calendar, DateEntry)
         self.assertIsInstance(calendar.name, str)
+        self.assertIsInstance(calendar.x, int)
+        self.assertIsInstance(calendar.y, int)
+        self.assertIsInstance(calendar.width, int)
         self.assertEqual(calendar.name, "calendar")
+        self.assertEqual(calendar.x, 0)
+        self.assertEqual(calendar.y, 0)
+        self.assertEqual(calendar.width, 20)
+        date_today = datetime.datetime.today()
+        year = date_today.year
+        month = date_today.month
+        day = date_today.day
+        self.assertEqual(calendar.get_date(), datetime.date(year, month, day))
         calendar.set_date("5/6/24")
         # should return a datetime.date(2024, 6, 5)
         self.assertEqual(calendar.get_date(), datetime.date(2024, 6, 5))
         calendar.destroy()
+
+    def test_create_calendar_failure_name_parameter(self):
+        print("=== test_create_calendar_failure_name_parameter ===")
+        # name - ValueError
+        raises_value_errors = [None, "", " "]
+        for invalid_value in raises_value_errors:
+            with self.subTest(
+                msg="Test values that raise a ValueError exception " +
+                "with the 'name' parameter.",
+                    value=invalid_value):
+                with self.assertRaises(ValueError):
+                    self.view.create_calender(name=invalid_value)
+        # name - TypeError
+        raises_type_errors = [1, 2.1, [], (), {}, tk, tk.StringVar, tk.IntVar]
+        for invalid_value in raises_type_errors:
+            with self.subTest(
+                msg="Test values that raise a TypeError exception " +
+                "with the 'name' parameter.",
+                    value=invalid_value):
+                with self.assertRaises(TypeError):
+                    self.view.create_calender(name=invalid_value)
+
+    def test_create_calendar_failure_value_error_x_y_width_parameters(self):
+        t_name = str("test_create_calendar_failure_value_error" +
+                     "_x_y_width_parameters")
+        print(f"=== {t_name} ===")
+        # x, y, width - ValueError
+        raises_value_errors = [None, -1]
+        for invalid_value in raises_value_errors:
+            with self.subTest(
+                msg="Test values that raise a ValueError exception " +
+                "with the 'x', 'y', and 'width' parameters.",
+                    value=invalid_value):
+                with self.assertRaises(ValueError):
+                    self.view.create_calender(x=invalid_value)
+                    self.view.create_calender(y=invalid_value)
+                    self.view.create_calender(width=invalid_value)
+
+    def test_create_calendar_failure_type_error_x_y_width_parameters(self):
+        t_name = str("test_create_calendar_failure_type_error" +
+                     "_x_y_width_parameters")
+        print(f"=== {t_name} ===")
+        # x, y, width - TypeError
+        raises_type_errors = [
+            "test", " ", "", 2.1, (), (1,), (1, 2, 3), {}, [], [1,], [1, 2,],
+            tk, tk.StringVar, tk.IntVar]
+        for invalid_value in raises_type_errors:
+            with self.subTest(
+                msg="Test values that raise a TypeError exception " +
+                "with the 'x', 'y', and 'width' parameters.",
+                    value=invalid_value):
+                with self.assertRaises(TypeError):
+                    self.view.create_calender(x=invalid_value)
+                    self.view.create_calender(y=invalid_value)
+                    self.view.create_calender(width=invalid_value)
 
     def test_set_font_successful(self):
         print("=== test_set_font_successful ==")
@@ -494,6 +629,15 @@ class TestView(unittest.TestCase):
                 with self.assertRaises(TypeError):
                     self.view.set_font("lbl_test", "Verdana", invalid_value, (
                         "normal", "italic", "no_underline"))
+
+    def tearDown(self):
+        for comp in self.view.components:
+            if isinstance(comp, DateEntry):
+                comp.destroy()
+        self.view.components.clear()
+        self.view.components = None
+        self.view.tk.destroy()
+        self.view = None
 
 
 if __name__ == '__main__':

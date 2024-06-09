@@ -264,6 +264,9 @@ class View:
         calendar = DateEntry(
                 master=parent, width=width)
         calendar.name = name
+        calendar.x = x
+        calendar.y = y
+        calendar.width = width
         calendar.place(x=x, y=y)
         self.components.append({calendar.name: calendar})
         return calendar

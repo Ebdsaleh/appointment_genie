@@ -9,10 +9,6 @@ class TestContact(unittest.TestCase):
         print("contact setUP")
         self.contact = Contact()
 
-    def tearDown(self):
-        print("contact tearDown")
-        self.contact = None
-
     def test_create_contact_with_default_values(self):
         print("=== test_create_contact_with_default_values ===")
         self.assertIsInstance(self.contact, Contact)
@@ -100,6 +96,10 @@ class TestContact(unittest.TestCase):
                     value=invalid_value):
                 with self.assertRaises(AttributeError):
                     self.contact.id = invalid_value
+
+    def tearDown(self):
+        print("contact tearDown")
+        self.contact = None
 
 
 if __name__ == '__main__':

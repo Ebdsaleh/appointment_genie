@@ -23,13 +23,7 @@ class TestUtilsValidators(unittest.TestCase):
         self.invalid_generic_string_type_error_values = [
                 1, 2.2, [2, 3], {}, ()]
 
-    def tearDown(self):
-        self.dt = None
-        self.invalid_datetime_values = None
-        self.invalid_int_values = None
-        self.invalid_tuple_values = None
-        self.invalid_string_values = None
-
+   
     # Generic validation of types
     def test_is_valid_string(self):
         print("=== test_is_valid_string ===")
@@ -419,6 +413,13 @@ class TestUtilsValidators(unittest.TestCase):
                 with self.assertRaises(TypeError):
                     val.validate_string_tuple_property(
                             test_string_tuple, invalid_value)
+
+    def tearDown(self):
+        self.dt = None
+        self.invalid_datetime_values = None
+        self.invalid_int_values = None
+        self.invalid_tuple_values = None
+        self.invalid_string_values = None
 
 
 if __name__ == '__main__':
