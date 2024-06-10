@@ -27,14 +27,14 @@ class TestUser(unittest.TestCase):
         self.assertIsInstance(self.user.password, str)
         self.assertIsInstance(self.user.contacts, list)
         self.assertIsInstance(self.user.bookings, list)
-        self.assertIsInstance(self.user._booking_id, int)
+        self.assertIsInstance(self.user._initialized, bool)
         # Value assertions
         self.assertEqual(self.user.user_name, "new_user")
         self.assertEqual(self.user.email, "update_this_email@appgenie.app")
         self.assertEqual(self.user.password, self.pw_hash)
         self.assertEqual(self.user.contacts, [])
         self.assertEqual(self.user.bookings, [])
-        self.assertEqual(self.user._booking_id, 0)
+        self.assertEqual(self.user._initialized, True)
 
     def test_create_user_with_arguments_success(self):
         print("=== test_create_user_with_arguments_success")
@@ -52,7 +52,7 @@ class TestUser(unittest.TestCase):
         self.assertIsInstance(user.password, str)
         self.assertIsInstance(user.contacts, list)
         self.assertIsInstance(user.bookings, list)
-        self.assertIsInstance(self.user._booking_id, int)
+        self.assertIsInstance(self.user._initialized, bool)
 
         # Value assertions
         self.assertEqual(user.user_name, "test_user")
@@ -60,7 +60,7 @@ class TestUser(unittest.TestCase):
         self.assertEqual(user.password, pw_hash)
         self.assertEqual(user.contacts, [])
         self.assertEqual(user.bookings, [])
-        self.assertEqual(self.user._booking_id, 0)
+        self.assertEqual(user._initialized, True)
 
     def test_create_user_with_arguments_failure_parameter_user_name(self):
         t_name = "test_create_user_with_arguments_failure_parameter_user_name"
@@ -208,7 +208,6 @@ class TestUser(unittest.TestCase):
                 desc="Test Booking")
 
         self.assertEqual(len(self.user.bookings), 1)
-        self.assertEqual(self.user._booking_id, 1)
         self.assertEqual(len(self.user.contacts), 2)
         self.assertIsInstance(self.user.contacts[0], Contact)
         self.assertIsInstance(self.user.contacts[1], Contact)
