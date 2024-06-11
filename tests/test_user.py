@@ -212,6 +212,11 @@ class TestUser(unittest.TestCase):
         self.assertIsInstance(self.user.contacts[0], Contact)
         self.assertIsInstance(self.user.contacts[1], Contact)
 
+    def test_get_instance(self):
+        print("=== test_get_instance ===")
+        self.assertIsNotNone(self.user.get_instance())
+        self.assertIsInstance(self.user.get_instance(), User)
+
     def tearDown(self):
         self.user = None
         self.pw_hash = None
