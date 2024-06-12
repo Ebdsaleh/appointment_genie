@@ -6,10 +6,17 @@ import tkinter as tk
 import tkinter.ttk as ttk
 
 
+class MockController:
+    def handle_login(self, username, password):
+        self.username = username
+        self.password = password
+
+
 class TestViewLogin(unittest.TestCase):
     def setUp(self):
-        print("=== setUp Login()")
-        self.login = Login()
+        print("=== setUp Login() ===")
+        self.controller = MockController()
+        self.login = Login(controller=self.controller)
         self.default_component_keys = [
                 'main_frame', 'lbl_login', 'lbl_username', 'lbl_password',
                 'txt_username', 'txt_password', 'btn_submit']

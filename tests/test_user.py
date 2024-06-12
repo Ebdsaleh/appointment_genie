@@ -188,6 +188,13 @@ class TestUser(unittest.TestCase):
         self.assertIsInstance(self.user.bookings, list)
         self.assertEqual(self.user.bookings, [])
 
+    def test_authenticate(self):
+        print("=== test_authenticate")
+        user = User(user_name="user", password="test_password")
+        self.assertEqual(user.user_name, "user")
+        # Takes in the user_name and the 'unhashed' password
+        self.assertTrue(user.authenticate(user.user_name, "test_password"))
+
     def test_create_booking(self):
         print("=== test_create_booking ===")
         title = "New Booking"

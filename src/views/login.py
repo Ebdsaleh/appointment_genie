@@ -9,7 +9,8 @@ class Login(View):
 
     """
 
-    def __init__(self, title="Login", size=(300, 400)):
+    def __init__(self, controller, title="Login", size=(300, 400)):
+        self.controller = controller
         super().__init__(title=title, size=size)
         self.setup_ui()
 
@@ -46,5 +47,7 @@ class Login(View):
         tk.Button.
         I'm thinking there needs to be a event manager to handle GUI events,
         this will allow forms/views to change in fluid manner."""
+        username = self.get_component('txt_username').get()
         pw = self.get_component('txt_password').get()
+        self.controller.handle_login(username, pw)
         return pw

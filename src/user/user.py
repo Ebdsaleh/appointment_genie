@@ -1,7 +1,7 @@
 # src/user/user.py
 from src.utils.validators import validate_string_property, \
         validate_string_dict_property, validate_email
-from src.utils.auth import check_password_hash, generate_pw_hash
+from src.utils.auth import verify_password, generate_pw_hash
 from src.contact.contact import Contact
 from src.booking.booking import Booking
 
@@ -54,6 +54,10 @@ class User:
             raise TypeError("'contact' must be a of type 'Contact'")
         else:
             self.contacts.append(value)
+
+    def authenticate(self, username, password):
+        return self.user_name == username and verify_password(
+                self.password, password)
 
     def create_booking(
             self,
