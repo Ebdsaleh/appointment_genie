@@ -224,6 +224,15 @@ class TestUser(unittest.TestCase):
         self.assertIsNotNone(self.user.get_instance())
         self.assertIsInstance(self.user.get_instance(), User)
 
+    def test_reset(self):
+        print("=== test_reset_user ===")
+        self.user.reset()
+        self.assertEqual(self.user.user_name, str())
+        self.assertEqual(self.user.password, str())
+        self.assertEqual(self.user.email, str())
+        self.assertEqual(self.user.contacts, [])
+        self.assertEqual(self.user.bookings, [])
+
     def tearDown(self):
         self.user = None
         self.pw_hash = None

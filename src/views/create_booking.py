@@ -6,8 +6,9 @@ import datetime
 
 
 class CreateBooking(View):
-    def __init__(self, title="Create Booking", size=(420, 400)):
+    def __init__(self, controller, title="Create Booking", size=(420, 400)):
         super().__init__(title=title, size=size)
+        self.controller = controller
         self.setup_ui()
 
     def setup_ui(self):
@@ -72,6 +73,7 @@ class CreateBooking(View):
                     details.append(widget.numvar.get())
                 if isinstance(widget, DateEntry):
                     details.append(widget.get_date())
+        self.controller.handle_create_booking(details)
         return details
 
     def clear(self):

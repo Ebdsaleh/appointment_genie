@@ -4,8 +4,9 @@ import tkinter as tk
 
 
 class AddContact(View):
-    def __init__(self, title="Add Contact", size=(420, 400)):
+    def __init__(self, controller, title="Add Contact", size=(420, 400)):
         super().__init__(title=title, size=size)
+        self.controller = controller
         self.setup_ui()
 
     def setup_ui(self):
@@ -62,6 +63,7 @@ class AddContact(View):
             for widget in component.values():
                 if isinstance(widget, tk.Entry):
                     details.append(widget.get())
+        self.controller.handle_add_contact(details)
         return details
 
     def clear(self):

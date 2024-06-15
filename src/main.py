@@ -1,10 +1,12 @@
 # src/main.py
 from src.views.create_booking import CreateBooking
+from src.controller.controller import Controller
 
 
 def main():
     print("Welcome To Appointment Genie!")
-    view = CreateBooking(title="App Genie: Create Booking")
+    controller = Controller()
+    view = CreateBooking(controller=controller, title="App Genie: Create Booking")
     view.tk.mainloop()
 
 

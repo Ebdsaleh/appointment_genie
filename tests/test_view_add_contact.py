@@ -5,11 +5,17 @@ from src.views.add_contact import AddContact
 from src.views.view import View
 
 
+class MockController:
+    def handle_add_contact(self, details):
+        self.details = details
+
+
 class TestViewAddContact(unittest.TestCase):
 
     def setUp(self):
         print("=== setUp TestViewAddContact ===")
-        self.view_add_contact = AddContact()
+        self.controller = MockController()
+        self.view_add_contact = AddContact(controller=self.controller)
         self.component_names = [
                name for component in self.view_add_contact.components
                for name in component.keys()]

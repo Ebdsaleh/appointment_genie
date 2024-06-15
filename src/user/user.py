@@ -88,6 +88,13 @@ class User:
             self.add_contact(new_contact)
         print(f"sending email to {contact_email}to confirm booking")
 
+    def reset(self):
+        self.user_name = str()
+        self.password = str()
+        self.email = str()
+        self.contacts = []
+        self.bookings = []
+
     @classmethod
     def get_instance(cls):
         """

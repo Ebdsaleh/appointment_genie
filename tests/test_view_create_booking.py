@@ -7,10 +7,16 @@ from src.views.view import View, DateEntry
 from src.views.create_booking import CreateBooking
 
 
+class MockController:
+    def handle_create_booking(self, details):
+        self.details = details
+
+
 class TestViewCreateBooking(unittest.TestCase):
 
     def setUp(self):
-        self.create_booking = CreateBooking()
+        self.controller = MockController()
+        self.create_booking = CreateBooking(controller=self.controller)
         self.component_names = [
                 name for component in self.create_booking.components
                 for name in component.keys()]
