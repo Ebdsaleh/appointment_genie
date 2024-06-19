@@ -90,3 +90,7 @@ class CreateBooking(View):
                 if isinstance(widget, tk.Spinbox):
                     widget.textvariable.set(0)
                     widget.numvar.set(0)
+
+
+if __name__ == '__main__':
+    pass

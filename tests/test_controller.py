@@ -15,11 +15,9 @@ class TestController(unittest.TestCase):
         self.assertIsNotNone(self.controller)
         self.assertIsInstance(self.controller, Controller)
         self.assertIsInstance(self.controller.user, User)
-        self.assertIsInstance(self.controller.login_view, Login)
+        self.assertEqual(self.controller.login_view, None)
         self.assertEqual(self.controller.add_contact_view, None)
         self.assertEqual(self.controller.create_booking_view, None)
-        self.assertEqual(
-                self.controller.login_view.controller, self.controller)
 
     def test_handle_login(self):
         print("=== test_handle_login ===")
@@ -69,8 +67,34 @@ class TestController(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.controller.handle_create_booking(None)
 
+    def test_handle_login_view(self):
+        print("=== test_handle_login_view ===")
+        self.assertIsNone(self.controller.login_view)
+        self.controller.handle_login_view("test_handle_login_view")
+        self.assertIsInstance(self.controller.login_view, Login)
+        self.controller.login_view.tk.destroy()
+
+    def test_handle_add_contact_view(self):
+        print("=== test_handle_add_contact_view ===")
+        self.assertIsNone(self.controller.add_contact_view)
+        self.controller.handle_add_contact_view("test_handle_add_contact")
+        self.assertIsInstance(self.controller.add_contact_view, AddContact)
+        self.controller.add_contact_view.tk.destroy()
+
+    def test_handle_create_booking_view(self):
+        print("=== test_handle_create_booking_view ===")
+        self.assertIsNone(self.controller.create_booking_view)
+        self.controller.handle_create_booking_view(
+                "test_handle_create_booking_view")
+        self.assertIsInstance(
+                self.controller.create_booking_view, CreateBooking)
+        self.controller.create_booking_view.tk.destroy()
+
     def tearDown(self):
         print("=== TestController tearDown ===")
+        self.controller.login_view = None
+        self.controller.add_contact_view = None
+        self.controller.create_booking_view = None
         self.controller = None
 
 

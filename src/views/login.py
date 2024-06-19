@@ -51,3 +51,7 @@ class Login(View):
         pw = self.get_component('txt_password').get()
         self.controller.handle_login(username, pw)
         return pw
+
+
+if __name__ == '__main__':
+    pass

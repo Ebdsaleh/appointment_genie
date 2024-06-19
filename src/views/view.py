@@ -349,3 +349,7 @@ class View:
                 {"underline": 1 if font_style[2] == "underline" else 0}
         ]
         return component
+
+
+if __name__ == '__main__':
+    pass

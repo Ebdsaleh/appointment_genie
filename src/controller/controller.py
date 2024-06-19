@@ -14,9 +14,28 @@ class Controller:
     def __init__(self):
         self.user = User.get_instance()
         self.reset_user()
-        self.login_view = Login(controller=self)
+        self.login_view = None
         self.add_contact_view = None
         self.create_booking_view = None
+
+    def handle_login_view(self, title=None):
+        if self.login_view is None:
+            title = title or "Login"
+            self.login_view = Login(controller=self, title=title)
+        return self.login_view
+
+    def handle_add_contact_view(self, title=None):
+        if self.add_contact_view is None:
+            title = title or "Add Contact"
+            self.add_contact_view = AddContact(controller=self, title=title)
+        return self.add_contact_view
+
+    def handle_create_booking_view(self, title=None):
+        if self.create_booking_view is None:
+            title = title or "Create Booking"
+            self.create_booking_view = CreateBooking(
+                    controller=self, title=title)
+        return self.create_booking_view
 
     def handle_login(self, username, password):
         if self.user.authenticate(username, password):
