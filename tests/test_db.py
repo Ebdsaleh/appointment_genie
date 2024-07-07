@@ -72,6 +72,27 @@ class TestDb(unittest.TestCase):
         test_conn.close()
         test_conn = None
 
+        # ValueError tests
+        raises_value_errors = [None, "", " "]
+        for invalid_value in raises_value_errors:
+            with self.subTest(
+                msg="Test values that raise a ValueError exception with the " +
+                "'_db_name' parameter.",
+                value=invalid_value
+            ):
+                with self.assertRaises(ValueError):
+                    self.db.create_connection(invalid_value)
+        # TypeError tests
+        raises_type_errors = [1, 1.0, [], {}, self.db, (), (1, 2, " ")]
+        for invalid_value in raises_type_errors:
+            with self.subTest(
+                msg="Test values that raise a TypeError exception with the " +
+                "'_db_name' parameter.",
+                value=invalid_value
+            ):
+                with self.assertRaises(TypeError):
+                    self.db.create_connection(invalid_value)
+
     def test_db_get_cursor(self):
         print("=== test_get_cursor ===")
         self.db.create_connection(self.db_name)
@@ -92,6 +113,27 @@ class TestDb(unittest.TestCase):
         self.assertEqual(
                 self.db.create_table_query(self.users_table_schema), result)
         self.assertEqual(result, str(guard + table_schema))
+        # ValueError tests
+        raises_value_errors = [None, " ", ""]
+        for invalid_value in raises_value_errors:
+            with self.subTest(
+                msg="Test values that raise a ValueError exception with the " +
+                "'table_definition' property."
+            ):
+                with self.assertRaises(ValueError):
+                    self.db.create_table_query(invalid_value)
+        # TypeError tests
+        raises_type_errors = [
+                2, 1.2, (1, 3, 4), ["Select FROM", 12], {"user": "value"},
+                self.db]
+        for invalid_value in raises_type_errors:
+            with self.subTest(
+                msg="Test values that raise a TypeError exception with the " +
+                "'table_definition' parameter.",
+                value=invalid_value
+            ):
+                with self.assertRaises(TypeError):
+                    self.db.create_table_query(invalid_value)
 
     def test_db_create_table(self):
         print("=== test_create_table ===")
@@ -146,6 +188,29 @@ class TestDb(unittest.TestCase):
         table_name = "users"
         self.assertTrue(self.db.table_exists(self.db.cursor, table_name))
         self.db.close()
+        # ValueError tests
+        raises_value_errors = [None, "", " "]
+        for invalid_value in raises_value_errors:
+            with self.subTest(
+                msg="Test values that raise a ValueError exception with the " +
+                "'table_name' parameter.",
+                value=invalid_value
+            ):
+                with self.assertRaises(ValueError):
+                    self.db.table_exists(self.db.cursor, invalid_value)
+        # TypeError tests
+        raises_type_errors = [
+                1, 2.3, (3, 3, "hello"), ["undefined", 12, self.db], {}, [],
+                self.db
+                ]
+        for invalid_value in raises_type_errors:
+            with self.subTest(
+                msg="Test values that raise a TypeError exception with the " +
+                "'table_definition' parameter",
+                value=invalid_value
+            ):
+                with self.assertRaises(TypeError):
+                    self.db.table_exists(self.db.cursor, invalid_value)
 
     def tearDown(self):
         print("TestDb tearDown")

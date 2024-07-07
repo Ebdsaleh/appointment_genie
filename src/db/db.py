@@ -1,5 +1,6 @@
 # src/db/db.py
 import sqlite3
+from src.utils.validators import validate_string_property
 
 connection = None
 cursor = None
@@ -8,6 +9,7 @@ db_name = None
 
 def create_connection(_db_name):
     global connection, cursor, db_name
+    validate_string_property(_db_name, "_db_name")
     connection = sqlite3.connect(_db_name)
     cursor = connection.cursor()
     db_name = _db_name
@@ -23,6 +25,7 @@ def get_cursor():
 
 
 def create_table_query(table_definition):
+    validate_string_property(table_definition, "table_definition")
     guard = "CREATE TABLE IF NOT EXISTS "
     return guard + table_definition
 
@@ -91,6 +94,7 @@ def show_tables():
 
 
 def table_exists(cursor, table_name):
+    validate_string_property(table_name, "table_name")
     try:
         cursor.execute(
                 "SELECT name FROM sqlite_master WHERE type='table' AND " +
